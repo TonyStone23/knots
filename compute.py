@@ -3,7 +3,7 @@
 import pandas as pd
 import sympy as sm
 from statesum import sl3
-from workdata import collect, prepare
+from data import collect, prepare
 
 #===
 # Evaluate the algorithm
@@ -47,8 +47,8 @@ outputfolder = 'output/'
 
 #---
 # Computed sl3s
-inputknots = 'knotsample.csv'
-outputsl3s = 'knotoutputsample.csv'
-truthfile = 'knotsampletruth.csv'
+inputknots = 'knotPD.csv'
+outputsl3s = 'computedsl3.csv'
+truthfile = 'knottruth.csv'
 
 main(inputfolder+inputknots, outputfolder+outputsl3s, inputfolder+truthfile)
