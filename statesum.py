@@ -67,7 +67,7 @@ def positivity(pd):
                     check = False
                     break
                     
-                elif (b == y) or (d == z) or (d == w) or (d == x):
+                elif (b == y) or (b == z) or (d == w) or (d == x):
                     assignments['negative'].append(item)
                     signedpd.append((item, 'negative'))
                     check = False
@@ -319,27 +319,6 @@ def resolveThreeSquare(state, qState):
                                 if addthird:
                                     newState.insert(0, third)
 
-                    # elif c == w:
-                    #     addthird = True
-                    #     for third in newState:
-                    #         if len(third) == 4:
-                    #             l, m, n, o = third
-                    #             newState.remove(third)
-
-                    #             if (d == m) and (x == n):
-                    #                 addfirst = False
-                    #                 addsecond = False
-                    #                 addthird = False
-                    #                 #print("recursive call on: ", newState + [first] + [second] + [third])
-                    #                 #print("recursive call 1: with ", first, second, third)
-                    #                 recurseone = evaluateState(travelWebs([o, l, a], [y, x, b], newState))
-                    #                 #print("recursive call 2: with ", first, second, third, [l,x,y,o])
-                    #                 recursetwo = evaluateState(newState.copy() + [[l, x, y, o],  [a, b]])
-                    #                 return [], qState * (recurseone + recursetwo)
-
-                    #             if addthird:
-                    #                 newState.insert(0, third)
-
                     if addsecond:
                         newState.insert(0, second)
 
@@ -367,65 +346,6 @@ def travelWebs(start, end, state, verbose = False):
             if (n == x) and (o == a):
                 newState.remove(item)
                 return newState + [[m, y, z, o], [b, l, o, c]]
-    
-# def travelWebs(start, end, state, verbose = False):
-
-#     print("travelling: ", state)
-#     print("start: ",start)
-#     print("end: ", end)
-
-#     a, b, c = start
-#     x, y, z = end
-    
-#     newState = state.copy()
-
-#     foundpath = False
-#     path = []
-
-#     # find path
-#     while not foundpath:
-#         if verbose:
-#             print(newState)
-#         item = newState.pop(0)
-#         if len(item) == 4:
-#             l, m, n, o = item
-#             if verbose:
-#                 print("path: ", path)
-
-#             if a == m:
-#                 path.append(item)
-#                 if x == l:
-#                     foundpath = True
-#                 else: 
-#                     a = l
-
-#             elif a == n:
-#                 path.append([o, n, m, l])
-#                 if x == o:
-#                     foundpath = True
-#                 else:
-#                     a = o
-            
-#             else:
-#                 newState.append(item)
-#         else:
-#             newState.append(item)
-
-#     print("state before webs: ", newState)
-#     for web in path: 
-
-#         print(web)
-
-#         l, m, n, o = web
-
-#         newState.append([b, n, m, c])
-#         b = o
-#         c = m
-#         if l == x: 
-#             newState.append([o, y, z, c])
-
-#     print("Newly constructed state:", newState)
-#     return newState
 
 #---
 # Compute lLWll(s)

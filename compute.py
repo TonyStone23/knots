@@ -56,8 +56,8 @@ outputfolder = 'output/'
 
 #---
 # Computed sl3s
-inputknots = 'knots.csv'
-outputsl3s = 'computesl3.csv'
-truthfile = 'knotstruth.csv'
+inputknots = 'knotspositivealternating.csv'
+outputsl3s = 'computedpositivealternating.csv'
+truthfile = 'knotspositivealternatingtruth.csv'
 
 main(inputfolder+inputknots, outputfolder+outputsl3s, inputfolder+truthfile)

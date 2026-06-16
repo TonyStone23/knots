@@ -121,11 +121,11 @@ if __name__ == "__main__":
     #===
     # Input Folders
     inputfolder = 'input/'
-    inputfile = 'positiveknots.csv'
+    inputfile = 'knotspositivealternating.csv'
     outputfile = 'twistedknots.csv'
 
     #---
     # Ground Truth
-    outputtruth = 'positiveknotstruth.csv'
+    outputtruth = 'knotspositivealternatingtruth.csv'
 
     main(inputfolder+inputfile, inputfolder+outputtruth)
