@@ -4,6 +4,7 @@ import pandas as pd
 import sympy as sm
 from statesum import sl3
 from data import collect, prepare
+from trials import trials
 
 #===
 # Evaluate the algorithm
@@ -56,8 +57,6 @@ outputfolder = 'output/'
 
 #---
 # Computed sl3s
-inputknots = 'knotspositivealternating.csv'
-outputsl3s = 'computedpositivealternating.csv'
-truthfile = 'knotspositivealternatingtruth.csv'
+inputknots, outputsl3s, truthfile = trials[1]
 
 main(inputfolder+inputknots, outputfolder+outputsl3s, inputfolder+truthfile)

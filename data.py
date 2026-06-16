@@ -3,6 +3,7 @@
 import sympy as sm
 import random as r
 import pandas as pd
+from trials import trials
 
 #===
 # Global variables
@@ -121,11 +122,7 @@ if __name__ == "__main__":
     #===
     # Input Folders
     inputfolder = 'input/'
-    inputfile = 'knotspositivealternating.csv'
-    outputfile = 'twistedknots.csv'
+    print(trials)
+    inputknots, _, truthfile = trials[1]
 
-    #---
-    # Ground Truth
-    outputtruth = 'knotspositivealternatingtruth.csv'
-
-    main(inputfolder+inputfile, inputfolder+outputtruth)
+    main(inputfolder+inputknots, inputfolder+truthfile)
