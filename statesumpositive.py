@@ -1,6 +1,8 @@
 # Compute the state sum of a knot or link
-# Input: Knot or link
+# Input: Positive not or link
 # Output: State Sum
+
+# Works for all positive knots on knotinfo.
 
 #===
 # Imports
@@ -272,6 +274,7 @@ def resolveSquares(state, qState):
                         newState.remove(next)
                         return [], qState * (evaluateState(newState.copy() + [[a, b], [w, x]])
                                               + evaluateState(newState.copy() + [[b, w], [a, x]]))
+                
                     
             if add:
                 newState.insert(0, item)
@@ -279,7 +282,7 @@ def resolveSquares(state, qState):
     return newState, qState
 
 #===
-# Resolve a square with three components
+# Resolve a square with three components # ACCOUNT FOR WEB FLIPPINGS
 #---
 # Shell Routine
 def resolveThreeSquare(state, qState):
@@ -313,33 +316,12 @@ def resolveThreeSquare(state, qState):
                                     #print("recursive call 1: with ", first, second, third)
                                     recurseone = evaluateState(travelWebs([l, o, d], [x, y, c], newState))
                                     #print("recursive call 2: with ", first, second, third, [l,x,y,o])
-                                    recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [c, d]])
+                                    recursetwo = evaluateState(newState.copy() + [[l, x, y, o],  [c, d]])
                                     return [], qState * (recurseone + recursetwo)
 
                                 if addthird:
                                     newState.insert(0, third)
-
-                    # elif c == w:
-                    #     addthird = True
-                    #     for third in newState:
-                    #         if len(third) == 4:
-                    #             l, m, n, o = third
-                    #             newState.remove(third)
-
-                    #             if (d == m) and (x == n):
-                    #                 addfirst = False
-                    #                 addsecond = False
-                    #                 addthird = False
-                    #                 #print("recursive call on: ", newState + [first] + [second] + [third])
-                    #                 #print("recursive call 1: with ", first, second, third)
-                    #                 recurseone = evaluateState(travelWebs([o, l, a], [y, x, b], newState))
-                    #                 #print("recursive call 2: with ", first, second, third, [l,x,y,o])
-                    #                 recursetwo = evaluateState(newState.copy() + [[l, x, y, o],  [a, b]])
-                    #                 return [], qState * (recurseone + recursetwo)
-
-                    #             if addthird:
-                    #                 newState.insert(0, third)
-
+                
                     if addsecond:
                         newState.insert(0, second)
 
@@ -361,83 +343,52 @@ def travelWebs(start, end, state, verbose = False):
     
     newState = state.copy()
 
-    for item in newState:
+    foundpath = False
+    path = []
+
+    # find path
+    while not foundpath:
+        if verbose:
+            print(newState)
+        item = newState.pop(0)
         if len(item) == 4:
             l, m, n, o = item
-            if (n == x) and (o == a):
-                newState.remove(item)
-                return newState + [[m, y, z, o], [b, l, o, c]]
-    
-# def travelWebs(start, end, state, verbose = False):
+            if verbose:
+                print("path: ", path)
 
-#     print("travelling: ", state)
-#     print("start: ",start)
-#     print("end: ", end)
-
-#     a, b, c = start
-#     x, y, z = end
-    
-#     newState = state.copy()
-
-#     foundpath = False
-#     path = []
-
-#     # find path
-#     while not foundpath:
-#         if verbose:
-#             print(newState)
-#         item = newState.pop(0)
-#         if len(item) == 4:
-#             l, m, n, o = item
-#             if verbose:
-#                 print("path: ", path)
-
-#             if a == m:
-#                 path.append(item)
-#                 if x == l:
-#                     foundpath = True
-#                 else: 
-#                     a = l
-
-#             elif a == n:
-#                 path.append([o, n, m, l])
-#                 if x == o:
-#                     foundpath = True
-#                 else:
-#                     a = o
+            if a == m:
+                path.append(item)
+                if x == l:
+                    foundpath = True
+                else: 
+                    a = l
             
-#             else:
-#                 newState.append(item)
-#         else:
-#             newState.append(item)
+            else:
+                newState.append(item)
+        else:
+            newState.append(item)
 
-#     print("state before webs: ", newState)
-#     for web in path: 
+    #print("state before webs: ", newState)
+    for web in path: 
 
-#         print(web)
+        print(web)
 
-#         l, m, n, o = web
+        l, m, n, o = web
 
-#         newState.append([b, n, m, c])
-#         b = o
-#         c = m
-#         if l == x: 
-#             newState.append([o, y, z, c])
+        newState.append([b, n, m, c])
+        b = o
+        c = m
+        if l == x: 
+            newState.append([o, y, z, c])
 
-#     print("Newly constructed state:", newState)
-#     return newState
+    #print("Newly constructed state:", newState)
+    return newState
 
 #---
 # Compute lLWll(s)
 def evaluateState(state, verbose = False):
     qState = 1
-    loops = 0
     while state:
-        # Resolve strands
-        # if verbose:
-        #     loops += 1
-        #     if loops == 5:
-        #         break
         if verbose:
             print("resolve strands")
             print(f"qState: {qState} --- State: {state}")
@@ -460,6 +411,12 @@ def evaluateState(state, verbose = False):
             print("resolve squares of two")
             print(f"qState: {qState} --- State: {state}")
         state, qState = resolveSquares(state, qState)
+
+        # # Resolve bubbles
+        # if verbose:
+        #     print("resolve bubble")
+        #     print(f"qState: {qState} --- State: {state}")
+        # state, qState = resolveBubbles(state, qState)
 
         # Resolve Squares
         webs, strands = countStrands(state)
@@ -545,5 +502,5 @@ pd_8_18 = 	[[6,2,7,1],[8,3,9,4],[16,11,1,12],[2,14,3,13],[4,15,5,16],[10,6,11,5]
 pd_11a_266 = [[6,2,7,1],[10,3,11,4],[14,7,15,8],[18,11,19,12],[12,6,13,5],[4,18,5,17],[20,16,21,15],[16,10,17,9],[22,13,1,14],[2,19,3,20],[8,21,9,22]]
 
 if __name__ == '__main__':
-    print(sl3(pd_11a_266))
+    print(sl3(pd_9_21))
     #evaluateOne(pd_11a_266, 2047)

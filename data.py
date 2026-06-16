@@ -80,7 +80,7 @@ def mangle(pd, moves):
 
 #===
 # Build dataset of knots
-def main(moves, inputfile, outputfile, outputtruth):
+def main(inputfile, outputtruth, outputfile = None, moves = 0):
     columns = ('Name', 'PD')
     truthcolumns = ('Name', 'HOMFLY')
     names, pds, homflys, items = collect(inputfile)
@@ -93,6 +93,7 @@ def main(moves, inputfile, outputfile, outputtruth):
         subframe = pd.DataFrame(columns = columns)
         subtruth = pd.DataFrame(columns = truthcolumns)
 
+
         if moves > 0:
             for m in range(moves):
                 new = write(mangle(prepare(pds[i]), m))
@@ -102,28 +103,29 @@ def main(moves, inputfile, outputfile, outputtruth):
                 subtruth.loc[m] = [names[i], truth]
                 
         else:
-            new = write(mangle(prepare(pds[i]), m))
-            subframe.loc[0] = [names[i],new]
+            subframe.loc[0] = [names[i],pds[i]]
 
-            truth = write(convert(homflys[i]))
+            truth = convert(homflys[i])
             subtruth.loc[0] = [names[i], truth]
 
-        output = pd.concat([output, subframe])
+        if outputfile is not None:
+            output = pd.concat([output, subframe])
         truths = pd.concat([truths, subtruth])
 
     print("Complete")
-    output.to_csv(outputfile, index = False)
+    if outputfile is not None:
+        output.to_csv(outputfile, index = False)
     truths.to_csv(outputtruth, index = False)
 
 if __name__ == "__main__":
     #===
     # Input Folders
     inputfolder = 'input/'
-    inputfile = 'knots.csv'
-    outputfile = 'knotPD.csv'
+    inputfile = 'positiveknots.csv'
+    outputfile = 'twistedknots.csv'
 
     #---
     # Ground Truth
-    outputtruth = 'knottruth.csv'
+    outputtruth = 'positiveknotstruth.csv'
 
-    main(1, inputfolder+inputfile, inputfolder+outputfile, inputfolder+outputtruth)
+    main(inputfolder+inputfile, inputfolder+outputtruth)

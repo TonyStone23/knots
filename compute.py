@@ -9,15 +9,24 @@ from data import collect, prepare
 # Evaluate the algorithm
 def evaluate(computedfile, truthfile):
 
+    names = list(pd.read_csv(computedfile)['Name'])
     computed = list(pd.read_csv(computedfile)['sl3'])
     truth = list(pd.read_csv(truthfile)['HOMFLY'])
+    errors = []
+    correct = []
 
     items = len(computed)
     count = 0
     for i in range(items):
         if sm.sympify(computed[i]) == sm.sympify(truth[i]):
+            correct.append(names[i])
             count += 1
+        else:
+            errors.append(names[i])
         print(f"{(count/items)*100:.5}% correct")
+    
+    print("correct: \n", correct)
+    print("errors: \n", errors)
 
 #===
 # Main Method
@@ -27,7 +36,7 @@ def main(knotdata, outputfile, truthfile):
     output = pd.DataFrame(columns = ('Name', 'sl3'))
 
     for i in range(items):
-        print(f"{i/items:.3}% complete")
+        print(f"{(i/items)*100:.3}% complete")
         print(f"computing: {names[i]}")
         
         computedsl3 = sl3(prepare(pds[i]))
@@ -47,8 +56,8 @@ outputfolder = 'output/'
 
 #---
 # Computed sl3s
-inputknots = 'knotPD.csv'
-outputsl3s = 'computedsl3.csv'
-truthfile = 'knottruth.csv'
+inputknots = 'knots.csv'
+outputsl3s = 'computesl3.csv'
+truthfile = 'knotstruth.csv'
 
 main(inputfolder+inputknots, outputfolder+outputsl3s, inputfolder+truthfile)
