@@ -412,12 +412,6 @@ def evaluateState(state, verbose = False):
             print(f"qState: {qState} --- State: {state}")
         state, qState = resolveSquares(state, qState)
 
-        # # Resolve bubbles
-        # if verbose:
-        #     print("resolve bubble")
-        #     print(f"qState: {qState} --- State: {state}")
-        # state, qState = resolveBubbles(state, qState)
-
         # Resolve Squares
         webs, strands = countStrands(state)
         if (strands == 0) and (webs > 0):
