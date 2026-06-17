@@ -1,5 +1,13 @@
-# knots
+# Knots
 Computing the sl3 invarinats of knots and links. See "NOTES.md" for file descriptions.
+
+## Development Timeline
+
+- (May 2026 - July 2026) within the suriem program SURIEM REU at MSU.
+
+## Acknowledgements
+
+Thank you to my SURIEM Mentor Matthew Harper for consultation with code development. Thank you to my teammates, Josh O'connor, Pepe Sanchez-Menchen, and Angie Wu for support. Thank you to the SURIEM Program as a whole for friendship!
 
 ## Citations
 
