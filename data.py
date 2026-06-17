@@ -29,6 +29,8 @@ def prepare(pd):
     pd = [list(map(int, i.strip("[]").split(";"))) for i in pd]
     return pd
 
+#===
+# Write a pd code to a new file
 def write(pd):
     pd  = "[" + ";".join("[" + ";".join(map(str, i)) + "]" for i in pd) + "]"
     return pd
@@ -118,11 +120,16 @@ def main(inputfile, outputtruth, outputfile = None, moves = 0):
         output.to_csv(outputfile, index = False)
     truths.to_csv(outputtruth, index = False)
 
+#===
+# Running
 if __name__ == "__main__":
-    #===
+
+    #---
     # Input Folders
     inputfolder = 'input/'
-    print(trials)
+
+    #---
+    # Input FIles
     inputknots, _, truthfile = trials[1]
 
     main(inputfolder+inputknots, inputfolder+truthfile)

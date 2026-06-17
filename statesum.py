@@ -1,4 +1,4 @@
-# Compute the state sum of a knot or link
+# Compute the state sum of a knot
 # Input: Knot or link
 # Output: State Sum
 
@@ -15,17 +15,18 @@ quantum3 = sm.var('[3]')
 #===
 # Determine knot positivity
 def positivity(pd):
+
     assignments = {'positive': [],
                    'negative': []}
-    
     signedpd = []
     
     while True:
         item = pd.pop(0)
         a, b, c, d = item
-
         check = True
-    
+
+        #---
+        # Determine the direction of b or d from outgoing strands in the pd
         if check:
             for next in pd:
                 w, x, y, z = next
@@ -40,8 +41,9 @@ def positivity(pd):
                     signedpd.append((item, 'positive'))
                     check = False
                 
+        #---
+        # Determine the direction of b or d from already determined crossings
         if check:
-
             for next in assignments["positive"]:
                 w, x, y, z,  = next
 
@@ -106,8 +108,6 @@ def Wmove(signedentry):
         return [[b, c, d, a]], -q**3
 
 #===
-# Evaluating a diagram
-#---
 # Find all of the states
 def findStates(signedpd, verbose = False):
 
@@ -128,7 +128,9 @@ def findStates(signedpd, verbose = False):
 
     return returns
 
-#~~~
+#===
+# ALgorithm subroutines
+#---
 # resolve a strand
 def resolveStrands(state, qState):
     cycle = False
@@ -139,10 +141,11 @@ def resolveStrands(state, qState):
         if len(item) == 2:
             a, b = item
             newState.remove(item)
-
             adda = True
             addb = True
 
+            #---
+            # Search for a strand, and replace the label not found in a component where a label is found
             for next in newState:
                 if a in next and adda:
                     addb = False
@@ -160,6 +163,8 @@ def resolveStrands(state, qState):
                     altered = True
                     break
 
+            #---
+            # If neither label is found within another component, it must be a circle
             if adda and addb:
                 qState = qState * quantum3
     
@@ -167,25 +172,12 @@ def resolveStrands(state, qState):
         return resolveStrands(newState, qState)
     else:
         return newState, qState, altered
-    
-#~~~
-# Count the strands
-def countStrands(state):
-    webs = 0
-    strands = 0
-    for item in state:
-        if len(item) == 2:
-            strands += 1
-        else:
-            webs += 1
-    return webs, strands
 
-#~~~
+#---
 # Resolve a bubble
 def resolveBubbles(state, qState):
     
     altered = False
-
     newState = state.copy()
 
     for item in newState:
@@ -195,12 +187,16 @@ def resolveBubbles(state, qState):
             newState.remove(item)
             add = True
 
+            #---
+            # Resolve a bubble on the left
             if d == c:
                 qState = qState * quantum2
                 newState.insert(0, [a, b])
                 altered = True
                 add = False
                 
+            #---
+            # Resolve a bubble on the right
             elif a == b:
                 qState = qState * quantum2
                 newState.insert(0, [d, c])
@@ -212,26 +208,28 @@ def resolveBubbles(state, qState):
 
     return newState, qState, altered
 
-#~~~
+#---
 # Resolve a stack case
 def resolveStacks(state, qState):
 
     altered = False
-    
     newState = state.copy()
+
     for item in newState:
 
         if len(item) == 4:
             a, b, c, d = item
             newState.remove(item)
-            
             add = True
+
             for next in newState:
                 move = False
 
                 if len(next) == 4:
                     w, x, y, z = next
 
+                    #---
+                    # Resolve a stack "below" a web
                     if ((a == x) and (d == y)):
                         qState = qState * quantum2
                         newState.remove(next)
@@ -239,7 +237,9 @@ def resolveStacks(state, qState):
                         altered = True
                         move = True
                         add = False
-
+                        
+                    #---
+                    # Resolve a stack "above" a web
                     elif ((b == w) and (c == z)):
                         qState = qState * quantum2
                         newState.remove(next)
@@ -256,17 +256,17 @@ def resolveStacks(state, qState):
 
     return newState, qState, altered
 
-#~~~
+#---
 # Resolve a square case
 def resolveSquares(state, qState):
     
     newState = state.copy()
+
     for item in newState:
 
         if len(item) == 4:
             a, b, c, d = item
             newState.remove(item)
-
             add = True
             
             for next in newState:
@@ -274,12 +274,15 @@ def resolveSquares(state, qState):
                 if len(next) == 4:
                     w, x, y, z = next
                     
+                    #---
+                    # Resolve a square "above" a web
                     if ((a == x) and (b == w)):
                         newState.remove(next)
-                        #print(newState + [[d, c], [y, z]])
                         return [], qState * (evaluateState(newState.copy() + [[d, c], [y, z]])
                                               + evaluateState(newState.copy() + [[c, z], [d, y]]))
                     
+                    #---
+                    # Resolve a square "beneath" a web
                     elif ((d == y) and (c == z)):
                         newState.remove(next)
                         return [], qState * (evaluateState(newState.copy() + [[a, b], [w, x]])
@@ -290,15 +293,15 @@ def resolveSquares(state, qState):
 
     return newState, qState
 
-#===
-# Resolve a square with three components
 #---
+# Resolve a square with three components
+#~~~
 # Shell Routine
 def resolveThreeSquare(state, qState, verbose = False):
 
     traveled = False
-
     newState = state.copy()
+
     for first in newState:
 
         if len(first) == 4:
@@ -312,6 +315,8 @@ def resolveThreeSquare(state, qState, verbose = False):
                     newState.remove(second)
                     addsecond = True
 
+                    #---
+                    # The first case where a square is "on top" of a web
                     if b == z:
                         addthird = True
                         for third in newState:
@@ -322,11 +327,12 @@ def resolveThreeSquare(state, qState, verbose = False):
                                 if (a == n) and (w == m):
                                     if verbose:
                                         print("Case 1")
-                                        #print("recursive call on: ", newState + [first] + [second] + [third])
                                         print("recursive call 1: with ", first, second, third)
 
                                     traveledstate, traveled = travelWebs([x, y, c], [l, o, d], newState, 1)
 
+                                    #~~~
+                                    # The difficult part has been dealt with, proceed with recursion
                                     if traveled:
                                         recurseone = evaluateState(traveledstate)
                                         recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [c, d]])
@@ -336,6 +342,8 @@ def resolveThreeSquare(state, qState, verbose = False):
                                 if addthird:
                                     newState.insert(0, third)
 
+                    #---
+                    # The second case where a square is "beneath" a web
                     if c == w:
                         addthird = True
                         for third in newState:
@@ -346,11 +354,12 @@ def resolveThreeSquare(state, qState, verbose = False):
                                 if (d == m) and (z == n):
                                     if verbose:
                                         print("Case 2")
-                                        #print("recursive call on: ", newState + [first] + [second] + [third])
                                         print("recursive call 1: with ", first, second, third)
 
                                     traveledstate, traveled = travelWebs([o, l, a], [y, x, b], newState, 2)
 
+                                    #~~~
+                                    # The difficult part has been dealt with, proceed with recursion
                                     if traveled:
                                         recurseone = evaluateState(traveledstate)
                                         recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [a, b]])
@@ -368,7 +377,7 @@ def resolveThreeSquare(state, qState, verbose = False):
 
     return newState, qState
 
-#---
+#~~~
 # Travel webs
 def travelWebs(left, right, state, case, verbose = False):
 
@@ -379,13 +388,15 @@ def travelWebs(left, right, state, case, verbose = False):
 
     a, b, c = left
     x, y, z = right
-    
+
     newState = state.copy()
 
     for item in newState:
         if len(item) == 4:
             q, r, s, t = item
 
+            #---
+            # Handle the first case
             if case == 1:
                 if (a == q) and (x == r):
                     newState.remove(item)
@@ -395,9 +406,12 @@ def travelWebs(left, right, state, case, verbose = False):
                         print("adding ", [y, s, r, z], [t, b, c, r], "\n")
 
                     return newState + [[y, s, r, z], [t, b, c, r]], True
+                
             elif verbose:
                 print("not case 1.")
                 
+            #---
+            # Handle the second case
             if case == 2:
                 if (a == s) and (t == x):
                     newState.remove(item)
@@ -406,26 +420,29 @@ def travelWebs(left, right, state, case, verbose = False):
                         print("adding", [c, s, r, b], [s, z, y, q], "\n")
 
                     return newState + [[c, s, r, b], [s, z, y, q]], True
+                
             elif verbose:
                 print("Not case 2.")
 
+    #---
+    # If it is not resolved here, resolve it elsewhere
     return state, False
 
+#===
+# Main ALgorithm
 #---
 # Compute lLWll(s)
 def evaluateState(state, verbose = False):
-    qState = 1
-    loops = 0
 
+    qState = 1
     squares = True
+
+    #---
+    # Do not check for squares unless the other subroutines have not altered the State
     altered = False
 
     while state:
-        # if verbose:
-        #     loops += 1
-        #     if loops == 5:
-        #         break
-
+        #~~~
         # Resolve strands
         if verbose:
             print("before resolve strands")
@@ -439,6 +456,7 @@ def evaluateState(state, verbose = False):
             print("after resolve strands")
             print(f"    qState: {qState} --- State: {state}\n")
 
+        #---
         # Resolve bubbles
         if verbose:
             print("before resolve bubble")
@@ -447,10 +465,12 @@ def evaluateState(state, verbose = False):
         state, qState, altered = resolveBubbles(state, qState)
         if altered:
             squares = False
+
         if verbose:
             print("after resolve bubble")
             print(f"    qState: {qState} --- State: {state}\n")
 
+        #---
         # Resolve stacks
         if verbose:
             print("before resolve stacks")
@@ -464,9 +484,12 @@ def evaluateState(state, verbose = False):
             print("after resolve stacks")
             print(f"    qState: {qState} --- State: {state}\n")
 
-        # Resolve Squares
+        #---
+        # Resolve squares
         if squares:
-            # Squares of two components
+
+            #~~~
+            # Resolve squares of two components
             if verbose:
                 print("before resolve squares of two")
                 print(f"    qState: {qState} --- State: {state}")
@@ -477,44 +500,36 @@ def evaluateState(state, verbose = False):
                 print("after resolve squares of two")
                 print(f"    qState: {qState} --- State: {state}\n")
 
-            # Squares of three components
-            webs, strands = countStrands(state)
+            #~~~
+            # Resolve squares of three components
             if verbose:
-                print(f"{webs} webs and {strands} strands")
+                print("before resolve squares of three")
+                print(f"    qState: {qState} --- State: {state}")
 
-            if (strands == 0) and (webs > 0):
-                if verbose:
-                    print("before resolve squares of three")
-                    print(f"    qState: {qState} --- State: {state}")
+            state, qState = resolveThreeSquare(state, qState)
 
-                state, qState = resolveThreeSquare(state, qState)
-
-                if verbose:
-                    print("after resolve squares of three")
-                    print(f"    qState: {qState} --- State: {state}\n")
+            if verbose:
+                print("after resolve squares of three")
+                print(f"    qState: {qState} --- State: {state}\n")
         
+        #---
         # For next loop
         squares = True
 
     return qState
 
-#---
-# Compute phi(s)
-def phase(state):
-    
-    ws = sum([1 if len(i) == 4 else 0 for i in state])
-    os = (len(state) - ws)//2
-
-    return q**((-1) *os * 2) * (-q)**((-1) * ws * 3)
-
+#===
+# Compute the sl3 polynomial
 #---
 # Perform State Sum
 def stateSum(pd, verbose = False):
 
+    #---
     # Determine states
     signedpd = positivity(pd)
     states = findStates(signedpd)
 
+    #---
     # Compute y(s)
     ys = []
     for i in range(len(states)):
@@ -528,6 +543,7 @@ def stateSum(pd, verbose = False):
             print("State: ", i)
             print(ys[-1])
 
+    #---
     # Summate over y(s)s
     llDll = 0
     for y in ys:
@@ -548,13 +564,15 @@ def simplify(llDll):
     q3 = (q**2 + 1 + q**(-2))
     return llDll.subs({quantum2:q2, quantum3:q3}).expand()
 
-#===
-# Compute the sl3 polynomial
+#---
+# sl3 driver
 def sl3(pd):
     llDll = stateSum(pd)
     simplified = simplify(llDll)
     return simplified
 
+#===
+# Testing
 #---
 # Compute a state
 def evaluateOne(pd, i):
@@ -562,10 +580,10 @@ def evaluateOne(pd, i):
     web, phase = state
     evaluateState(web)
 
-#===
-# Testing
 pd_11a_266 = [[18,11,19,12],[6,2,7,1],[10,3,11,4],[14,7,15,8],[12,6,13,5],[4,18,5,17],[20,16,21,15],[16,10,17,9],[22,13,1,14],[2,19,3,20],[8,21,9,22]]
 pd_11a_257 = [[6,2,7,1],[8,4,9,3],[2,8,3,7],[16,10,17,9],[14,5,15,6],[4,15,5,16],[22,18,1,17],[18,13,19,14],[20,11,21,12],[12,19,13,20],[10,21,11,22]]
 
+#---
+# Main
 if __name__ == '__main__':
     print(sl3(pd_11a_266))

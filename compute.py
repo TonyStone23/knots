@@ -1,3 +1,5 @@
+# Computation for large amoutns of knots
+
 #===
 # Imports
 import pandas as pd
@@ -30,6 +32,17 @@ def evaluate(computedfile, truthfile):
     print("errors: \n", errors)
 
 #===
+# Path variables
+#---
+# Input/Output folders
+inputfolder = 'input/'
+outputfolder = 'output/'
+
+#---
+# Computed sl3s
+inputknots, outputsl3s, truthfile = trials[3]
+
+#===
 # Main Method
 def main(knotdata, outputfile, truthfile):
     names, pds, homflys, items = collect(knotdata)
@@ -49,14 +62,5 @@ def main(knotdata, outputfile, truthfile):
     evaluate(outputfile, truthfile)
 
 #===
-# Path variables
-#---
-# Input/Output folders
-inputfolder = 'input/'
-outputfolder = 'output/'
-
-#---
-# Computed sl3s
-inputknots, outputsl3s, truthfile = trials[0]
-
+# Running
 main(inputfolder+inputknots, outputfolder+outputsl3s, inputfolder+truthfile)
