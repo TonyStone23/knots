@@ -57,6 +57,6 @@ outputfolder = 'output/'
 
 #---
 # Computed sl3s
-inputknots, outputsl3s, truthfile = trials[1]
+inputknots, outputsl3s, truthfile = trials[0]
 
 main(inputfolder+inputknots, outputfolder+outputsl3s, inputfolder+truthfile)
