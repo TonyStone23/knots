@@ -299,7 +299,6 @@ def resolveSquares(state, qState):
 # Shell Routine
 def resolveThreeSquare(state, qState, verbose = False):
 
-    traveled = False
     newState = state.copy()
 
     for first in newState:
@@ -329,15 +328,12 @@ def resolveThreeSquare(state, qState, verbose = False):
                                         print("Case 1")
                                         print("recursive call 1: with ", first, second, third)
 
-                                    traveledstate, traveled = travelWebs([x, y, c], [l, o, d], newState, 1)
+                                    traveledstate = travelWebs([x, y, c], [l, o, d], newState, 1)
 
-                                    #~~~
-                                    # The difficult part has been dealt with, proceed with recursion
-                                    if traveled:
-                                        recurseone = evaluateState(traveledstate)
-                                        recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [c, d]])
-                                        
-                                        return [], qState * (recurseone + recursetwo)
+                                    recurseone = evaluateState(traveledstate)
+                                    recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [c, d]])
+                                    
+                                    return [], qState * (recurseone + recursetwo)
 
                                 if addthird:
                                     newState.insert(0, third)
@@ -356,15 +352,12 @@ def resolveThreeSquare(state, qState, verbose = False):
                                         print("Case 2")
                                         print("recursive call 1: with ", first, second, third)
 
-                                    traveledstate, traveled = travelWebs([o, l, a], [y, x, b], newState, 2)
+                                    traveledstate = travelWebs([o, l, a], [y, x, b], newState, 2)
 
-                                    #~~~
-                                    # The difficult part has been dealt with, proceed with recursion
-                                    if traveled:
-                                        recurseone = evaluateState(traveledstate)
-                                        recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [a, b]])
+                                    recurseone = evaluateState(traveledstate)
+                                    recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [a, b]])
 
-                                        return [], qState * (recurseone + recursetwo)
+                                    return [], qState * (recurseone + recursetwo)
 
                                 if addthird:
                                     newState.insert(0, third)
@@ -379,7 +372,7 @@ def resolveThreeSquare(state, qState, verbose = False):
 
 #~~~
 # Travel webs
-def travelWebs(left, right, state, case, verbose = False):
+def travelWebs(left, right, state, case, verbose = True):
 
     if verbose:
         print("travelling: ", state)
@@ -390,43 +383,61 @@ def travelWebs(left, right, state, case, verbose = False):
     x, y, z = right
 
     newState = state.copy()
+    generatedWeb = []
 
-    for item in newState:
-        if len(item) == 4:
-            q, r, s, t = item
-
-            #---
-            # Handle the first case
-            if case == 1:
-                if (a == q) and (x == r):
-                    newState.remove(item)
-            
-                    if verbose:
-                        print("removing", item)
-                        print("adding ", [y, s, r, z], [t, b, c, r], "\n")
-
-                    return newState + [[y, s, r, z], [t, b, c, r]], True
-                
-            elif verbose:
-                print("not case 1.")
-                
-            #---
-            # Handle the second case
-            if case == 2:
-                if (a == s) and (t == x):
-                    newState.remove(item)
-                    if verbose:
-                        print("removing", item)
-                        print("adding", [c, s, r, b], [s, z, y, q], "\n")
-
-                    return newState + [[c, s, r, b], [s, z, y, q]], True
-                
-            elif verbose:
-                print("Not case 2.")
+    travel = True
 
     #---
-    # If it is not resolved here, resolve it elsewhere
-    return state, False
+    # Handle the first case
+    if case == 1:
+        while travel:
+            item = newState.pop()
+            add = True
+
+            if len(item) == 4:
+                q, r, s, t = item
+
+                print(a, q)
+
+                if a == q:
+                    add = False
+                    generatedWeb.append([t, b, c, r])
+                    c = r
+                    b = s
+                    a = r
+                    if r == x:
+                        generatedWeb.append([y, s, r, z])
+                        travel = False
+                
+                if add:
+                    newState.insert(0, item)
+
+    #---
+    # Handle the second case   
+    if case == 2:
+        while travel:
+            item = newState.pop()
+            add = True
+
+            if len(item) == 4:
+                q, r, s, t = item
+
+                #print(a, q)
+
+                if a == s:
+                    add = False
+                    generatedWeb.append([c, s, r, b])
+                    c = s
+                    b = q
+                    a = t
+                    if t == x:
+                        generatedWeb.append([s, z, y, q])
+                        travel = False
+                
+                if add:
+                    newState.insert(0, item)    
+                
+    return newState + generatedWeb
 
 #===
 # Main ALgorithm
@@ -580,10 +591,8 @@ def evaluateOne(pd, i):
     web, phase = state
     evaluateState(web)
 
-pd_11a_266 = [[18,11,19,12],[6,2,7,1],[10,3,11,4],[14,7,15,8],[12,6,13,5],[4,18,5,17],[20,16,21,15],[16,10,17,9],[22,13,1,14],[2,19,3,20],[8,21,9,22]]
-pd_11a_257 = [[6,2,7,1],[8,4,9,3],[2,8,3,7],[16,10,17,9],[14,5,15,6],[4,15,5,16],[22,18,1,17],[18,13,19,14],[20,11,21,12],[12,19,13,20],[10,21,11,22]]
-
+pd_8_18 = 	[[6,2,7,1],[8,3,9,4],[16,11,1,12],[2,14,3,13],[4,15,5,16],[10,6,11,5],[12,7,13,8],[14,10,15,9]]
 #---
 # Main
 if __name__ == '__main__':
-    print(sl3(pd_11a_266))
+    print(sl3(pd_8_18))
