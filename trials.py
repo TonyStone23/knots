@@ -1,6 +1,7 @@
 #===
 # Storage for all trial configurations
 trials = [
+    ['knots.csv', 'computedknots.csv', 'knotstruth.csv'],
     ['knotstest.csv', 'computedtest.csv', 'knotstesttruth.csv'],
     ['knotstesttwo.csv', 'computedtesttwo.csv', 'knotstesttruthtwo.csv'],
     ['knotspositive.csv', 'computedpositives.csv', 'knotspositivetruth.csv'],

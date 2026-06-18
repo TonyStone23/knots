@@ -372,7 +372,7 @@ def resolveThreeSquare(state, qState, verbose = False):
 
 #~~~
 # Travel webs
-def travelWebs(left, right, state, case, verbose = True):
+def travelWebs(left, right, state, case, verbose = False):
 
     if verbose:
         print("travelling: ", state)
@@ -397,8 +397,6 @@ def travelWebs(left, right, state, case, verbose = True):
             if len(item) == 4:
                 q, r, s, t = item
 
-                print(a, q)
-
                 if a == q:
                     add = False
                     generatedWeb.append([t, b, c, r])
@@ -421,8 +419,6 @@ def travelWebs(left, right, state, case, verbose = True):
 
             if len(item) == 4:
                 q, r, s, t = item
-
-                #print(a, q)
 
                 if a == s:
                     add = False
