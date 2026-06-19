@@ -66,15 +66,15 @@ def resolveThreeSquare(state, verbose = False):
 
 #~~~
 # Travel webs
-def travelWebs(left, right, state, case, verbose = True):
+def travelWebs(start, end, state, case, verbose = True):
 
     if verbose:
         print("travelling: ", state)
-        print("start: ", left)
-        print("end: ", right)
+        print("start: ", start)
+        print("end: ", end)
 
-    a, b, c = left
-    x, y, z = right
+    a, b, c = start
+    x, y, z = end
 
     newState = state.copy()
     generatedWeb = []
@@ -95,13 +95,21 @@ def travelWebs(left, right, state, case, verbose = True):
 
                 if a == q:
                     add = False
-                    generatedWeb.append([t, b, c, r])
-                    c = r
-                    b = s
+                    generatedWeb.append([t, b, c, q])
                     a = r
-                    if r == x:
-                        generatedWeb.append([y, s, r, z])
-                        travel = False
+                    b = s
+                    c = q
+
+                elif a == t:
+                    add = False
+                    generatedWeb.append([t, b, c, q])
+                    a = r
+                    b = s
+                    c = t
+
+                if a == x:
+                    generatedWeb.append([y, b, c, z])
+                    travel = False
                 
                 if add:
                     newState.insert(0, item)
@@ -116,17 +124,23 @@ def travelWebs(left, right, state, case, verbose = True):
             if len(item) == 4:
                 q, r, s, t = item
 
-                #print(a, q)
-
                 if a == s:
                     add = False
                     generatedWeb.append([c, s, r, b])
-                    c = s
-                    b = q
                     a = t
-                    if t == x:
-                        generatedWeb.append([s, z, y, q])
-                        travel = False
+                    b = q
+                    c = s
+
+                elif a == r:
+                    add = False
+                    generatedWeb.append([c, s, r, b])
+                    a = t
+                    b = q
+                    c = r
+
+                if t == x:
+                    generatedWeb.append([c, z, y, b])
+                    travel = False
                 
                 if add:
                     newState.insert(0, item)    

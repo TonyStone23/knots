@@ -304,12 +304,18 @@ def resolveThreeSquare(state, qState, verbose = False):
     for first in newState:
 
         if len(first) == 4:
+            if verbose:
+                print(first)
+
             a, b, c, d = first
             newState.remove(first)
             addfirst = True
     
             for second in newState:
                 if len(second) == 4:
+                    if verbose:
+                        print("> ", second)
+
                     w, x, y, z = second
                     newState.remove(second)
                     addsecond = True
@@ -320,6 +326,9 @@ def resolveThreeSquare(state, qState, verbose = False):
                         addthird = True
                         for third in newState:
                             if len(third) == 4:
+                                if verbose:
+                                    print("> > ", third)
+
                                 l, m, n, o = third
                                 newState.remove(third)
 
@@ -328,7 +337,9 @@ def resolveThreeSquare(state, qState, verbose = False):
                                         print("Case 1")
                                         print("recursive call 1: with ", first, second, third)
 
-                                    traveledstate = travelWebs([x, y, c], [l, o, d], newState, 1)
+                                    traveledstate = travelWebs([x, y, c], [l, o, d], newState)
+                                    if verbose:
+                                        print("traveled state:", traveledstate)
 
                                     recurseone = evaluateState(traveledstate)
                                     recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [c, d]])
@@ -344,6 +355,9 @@ def resolveThreeSquare(state, qState, verbose = False):
                         addthird = True
                         for third in newState:
                             if len(third) == 4:
+                                if verbose:
+                                    print("> > ", third)
+                                    
                                 l, m, n, o = third
                                 newState.remove(third)
 
@@ -352,7 +366,9 @@ def resolveThreeSquare(state, qState, verbose = False):
                                         print("Case 2")
                                         print("recursive call 1: with ", first, second, third)
 
-                                    traveledstate = travelWebs([o, l, a], [y, x, b], newState, 2)
+                                    traveledstate = travelWebs([y, b, x], [o, a, l], newState)
+                                    if verbose:
+                                        print("traveled state:", traveledstate)
 
                                     recurseone = evaluateState(traveledstate)
                                     recursetwo = evaluateState(newState.copy() + [[l, x, y, o], [a, b]])
@@ -372,25 +388,66 @@ def resolveThreeSquare(state, qState, verbose = False):
 
 #~~~
 # Travel webs
-def travelWebs(left, right, state, case, verbose = False):
+def travelWebs(start, end, state, verbose = True):
 
     if verbose:
+        print('\n')
         print("travelling: ", state)
-        print("start: ", left)
-        print("end: ", right)
+        print("start: ", start)
+        print("end: ", end)
 
-    a, b, c = left
-    x, y, z = right
+    a, b, c = start
+    x, y, z = end
 
     newState = state.copy()
-    generatedWeb = []
 
     travel = True
 
     #---
-    # Handle the first case
-    if case == 1:
-        while travel:
+    # rebuild components
+    while travel:
+
+        if (x in [a, b, c]) and travel:
+            print(x, [a, b, c])
+            if a == x:
+                newState.insert(0, [y, b, c, z])
+            elif b == x:
+                newState.insert(0, [y, c, a, z])
+            elif c == x:
+                newState.insert(0, [y, a, b, z])
+            print('\n')
+            print(newState)
+            print("Ending")
+            travel = False
+
+        elif (y in [a, b, c]) and travel:
+            print(y, [a, b, c])
+            if a == y:
+                newState.insert(0, [z, b, c, x])
+            elif b == y:
+                newState.insert(0, [z, c, a, x])
+            elif c == y:
+                newState.insert(0, [z, a, b, x])
+            print('\n')
+            print(newState)
+            print("Ending")
+            travel = False
+    
+        elif (z in [a, b, c]) and travel:
+            print(z, [a, b, c])
+            if a == z:
+                newState.insert(0, [x, b, c, y])
+            elif b == z:
+                newState.insert(0, [x, c, a, y])
+            elif c == z:
+                newState.insert(0, [x, a, b, y])
+
+            print('\n')
+            print(newState)
+            print("Ending")
+            travel = False
+
+        else:
             item = newState.pop()
             add = True
 
@@ -398,42 +455,32 @@ def travelWebs(left, right, state, case, verbose = False):
                 q, r, s, t = item
 
                 if a == q:
+                    print('\n')
+                    print(newState)
                     add = False
-                    generatedWeb.append([t, b, c, r])
-                    c = r
-                    b = s
+                    newState.insert(0, [t, b, c, q])
+                    print([a, b, c], "&", item, "-->", [t, b, c, q])
                     a = r
-                    if r == x:
-                        generatedWeb.append([y, s, r, z])
-                        travel = False
+                    b = s
+                    c = q
+                    print("    Now", [a, b, c], "looking for", [x, y, z])
+
+                elif a == t:
+                    print('\n')
+                    print(newState)
+                    add = False
+                    newState.insert(0, [t, b, c, q])
+                    print([a, b, c], "&", item, "-->", [t, b, c, q])
+                    a = r
+                    b = s
+                    c = t
+                    print("    Now", [a, b, c], "looking for", [x, y, z])
                 
                 if add:
                     newState.insert(0, item)
 
-    #---
-    # Handle the second case   
-    if case == 2:
-        while travel:
-            item = newState.pop()
-            add = True
-
-            if len(item) == 4:
-                q, r, s, t = item
-
-                if a == s:
-                    add = False
-                    generatedWeb.append([c, s, r, b])
-                    c = s
-                    b = q
-                    a = t
-                    if t == x:
-                        generatedWeb.append([s, z, y, q])
-                        travel = False
-                
-                if add:
-                    newState.insert(0, item)    
-                
-    return newState + generatedWeb
+                #print(newState)
+    return newState
 
 #===
 # Main ALgorithm
@@ -588,7 +635,9 @@ def evaluateOne(pd, i):
     evaluateState(web)
 
 pd_8_18 = 	[[6,2,7,1],[8,3,9,4],[16,11,1,12],[2,14,3,13],[4,15,5,16],[10,6,11,5],[12,7,13,8],[14,10,15,9]]
+pd_11a_266 = [[12,6,13,5],[4,18,5,17],[20,16,21,15],[16,10,17,9],[22,13,1,14],[2,19,3,20],[8,21,9,22], [6,2,7,1],[10,3,11,4],[14,7,15,8],[18,11,19,12]]
 #---
 # Main
 if __name__ == '__main__':
     print(sl3(pd_8_18))
+    #print(sl3(pd_11a_266))
