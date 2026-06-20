@@ -40,7 +40,7 @@ outputfolder = 'output/'
 
 #---
 # Computed sl3s
-inputknots, outputsl3s, truthfile = trials[1]
+inputknots, outputsl3s, truthfile = trials[0]
 
 #===
 # Main Method

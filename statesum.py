@@ -132,13 +132,16 @@ def findStates(signedpd, verbose = False):
 # ALgorithm subroutines
 #---
 # resolve a strand
-def resolveStrands(state, qState):
+def resolveStrands(state, qState, verbose = False):
     cycle = False
     newState = state.copy()
     altered = False
 
     for item in newState:
         if len(item) == 2:
+            if verbose:
+                print("item", item)
+
             a, b = item
             newState.remove(item)
             adda = True
@@ -147,28 +150,41 @@ def resolveStrands(state, qState):
             #---
             # Search for a strand, and replace the label not found in a component where a label is found
             for next in newState:
+                if verbose:
+                    print("--> next:", next)
+
                 if a in next and adda:
                     addb = False
                     cycle = True
                     newState.remove(next)
                     newState.insert(0, [i if a != i else b for i in next])
+                    if verbose:
+                        print("    --> adding", [i if a != i else b for i in next])
                     altered = True
-                    break
+                    #break
 
                 if b in next and addb:
                     adda = False
                     cycle = True
                     newState.remove(next)
                     newState.insert(0, [i if b != i else a for i in next])
+                    if verbose:
+                        print("    --> adding", [i if b != i else a for i in next])
                     altered = True
-                    break
+                    #break
+                
+            if verbose:
+                print("cycling", cycle)
 
             #---
             # If neither label is found within another component, it must be a circle
             if adda and addb:
+                cycle = True
                 qState = qState * quantum3
     
     if cycle:
+        if verbose:
+            print("cycling on: ", newState)
         return resolveStrands(newState, qState)
     else:
         return newState, qState, altered
@@ -388,7 +404,7 @@ def resolveThreeSquare(state, qState, verbose = False):
 
 #~~~
 # Travel webs
-def travelWebs(start, end, state, verbose = True):
+def travelWebs(start, end, state, verbose = False):
 
     if verbose:
         print('\n')
@@ -408,29 +424,29 @@ def travelWebs(start, end, state, verbose = True):
     while travel:
 
         if (x in [a, b, c]) and travel:
-            print(x, [a, b, c])
             if a == x:
                 newState.insert(0, [y, b, c, z])
             elif b == x:
                 newState.insert(0, [y, c, a, z])
             elif c == x:
                 newState.insert(0, [y, a, b, z])
-            print('\n')
-            print(newState)
-            print("Ending")
+
+            if verbose:
+                print("Ending")
+
             travel = False
 
         elif (y in [a, b, c]) and travel:
-            print(y, [a, b, c])
             if a == y:
                 newState.insert(0, [z, b, c, x])
             elif b == y:
                 newState.insert(0, [z, c, a, x])
             elif c == y:
                 newState.insert(0, [z, a, b, x])
-            print('\n')
-            print(newState)
-            print("Ending")
+
+            if verbose:
+                print("Ending")
+
             travel = False
     
         elif (z in [a, b, c]) and travel:
@@ -442,9 +458,9 @@ def travelWebs(start, end, state, verbose = True):
             elif c == z:
                 newState.insert(0, [x, a, b, y])
 
-            print('\n')
-            print(newState)
-            print("Ending")
+            if verbose:
+                print("Ending")
+
             travel = False
 
         else:
@@ -455,26 +471,26 @@ def travelWebs(start, end, state, verbose = True):
                 q, r, s, t = item
 
                 if a == q:
-                    print('\n')
-                    print(newState)
                     add = False
                     newState.insert(0, [t, b, c, q])
-                    print([a, b, c], "&", item, "-->", [t, b, c, q])
+                    if verbose:
+                        print([a, b, c], "&", item, "-->", [t, b, c, q])
                     a = r
                     b = s
                     c = q
-                    print("    Now", [a, b, c], "looking for", [x, y, z])
+                    if verbose:
+                        print("    Now", [a, b, c], "looking for", [x, y, z])
 
                 elif a == t:
-                    print('\n')
-                    print(newState)
                     add = False
                     newState.insert(0, [t, b, c, q])
-                    print([a, b, c], "&", item, "-->", [t, b, c, q])
+                    if verbose:
+                        print([a, b, c], "&", item, "-->", [t, b, c, q])
                     a = r
                     b = s
                     c = t
-                    print("    Now", [a, b, c], "looking for", [x, y, z])
+                    if verbose:
+                        print("    Now", [a, b, c], "looking for", [x, y, z])
                 
                 if add:
                     newState.insert(0, item)
@@ -636,8 +652,9 @@ def evaluateOne(pd, i):
 
 pd_8_18 = 	[[6,2,7,1],[8,3,9,4],[16,11,1,12],[2,14,3,13],[4,15,5,16],[10,6,11,5],[12,7,13,8],[14,10,15,9]]
 pd_11a_266 = [[12,6,13,5],[4,18,5,17],[20,16,21,15],[16,10,17,9],[22,13,1,14],[2,19,3,20],[8,21,9,22], [6,2,7,1],[10,3,11,4],[14,7,15,8],[18,11,19,12]]
+pd_11n_130 = [[4,2,5,1],[15,22,16,1],[10,3,11,4],[2,11,3,12],[9,17,10,16],[17,13,18,12],[7,14,8,15],[5,18,6,19],[19,6,20,7],[13,21,14,20],[21,9,22,8]]
 #---
 # Main
 if __name__ == '__main__':
-    print(sl3(pd_8_18))
+    print(sl3(pd_11n_130))
     #print(sl3(pd_11a_266))
