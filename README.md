@@ -1,6 +1,6 @@
 # Knots
 
-Computing the sl3 invariant of knots and links.
+Computing the sl3 invariant from the PD code representation of a knot or link.
 
 ## Project Components
 
