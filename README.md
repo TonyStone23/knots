@@ -1,6 +1,45 @@
 # Knots
 
-Computing the sl3 invarinats of knots and links.
+Computing the sl3 invariant of knots and links.
+
+## Project Components
+
+### statesum.py
+
+- This file contains the algorithm to compute the sl3 invariant of knots and links.
+
+### compute.py
+
+- This file is used to compute large amounts of knots/links. 
+
+- File parameters recorded and input from **trials.py**.
+
+### data.py
+
+- This file contains the tools to manage knot datasets. 
+
+- Can be used to generate a set with RI invariants applied to them.
+
+### trials.py
+
+- This file contains the names of required input and output csv files.
+
+### input/output
+
+- These folders contain csv files that are used for inputs and output. 
+
+    - Any file that is input goes to "input".
+    - Computed sl3s go into "output".
+
+- Folders should be recorded in **trials.py**.
+
+## Development Timeline
+
+- **May 2026 - July 2026.** Work done within the suriem program SURIEM REU at MSU.
+
+    - May 18 - Program begins.
+
+    - June 20-22 -  computedknots.csv is generated using the <a href = "https://docs.icer.msu.edu/">HPCC</a> at MSU.
 
 ## Acknowledgements
 
