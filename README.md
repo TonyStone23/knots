@@ -14,3 +14,5 @@ Thank you to my SURIEM Mentor Matthew Harper for consultation with code developm
 
 
 [3] C. Livingston and A. H. Moore, KnotInfo: Table of Knot Invariants, <a href = https://knotinfo.org>knotinfo.org</a>, June 16, 2026. 
+
+[4] Institute for Cyber-Enabled Research at Michigan State University, _High Performance Computing Center_, <a href = "https://docs.icer.msu.edu/"> ICER Documentation</a>, June 20, 2026.

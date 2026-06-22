@@ -46,19 +46,42 @@ inputknots, outputsl3s, truthfile = trials[0]
 # Main Method
 def main(knotdata, outputfile, truthfile):
     names, pds, homflys, items = collect(knotdata)
-    
-    output = pd.DataFrame(columns = ('Name', 'sl3'))
+
+    # Determine which knots have already been computed
+    try:
+        completed = set(pd.read_csv(outputfile)['Name'])
+        print(f"Found {len(completed)} previously computed knots.")
+    except FileNotFoundError:
+        completed = set()
+        pd.DataFrame(columns=('Name', 'sl3')).to_csv(
+            outputfile, index=False
+        )
 
     for i in range(items):
-        print(f"{(i/items)*100:.3}% complete")
+
+        if names[i] in completed:
+            continue
+
+        print(f"{(i/items)*100:.3f}% complete")
         print(f"computing: {names[i]}")
-        
-        computedsl3 = sl3(prepare(pds[i]))
-        output.loc[i] = [names[i], computedsl3]
+
+        try:
+            computedsl3 = sl3(prepare(pds[i]))
+
+            pd.DataFrame(
+                [[names[i], computedsl3]],
+                columns=('Name', 'sl3')
+            ).to_csv(
+                outputfile,
+                mode='a',
+                header=False,
+                index=False
+            )
+
+        except Exception as e:
+            print(f"Error computing {names[i]}: {e}")
 
     print("Complete")
-    output.to_csv(outputfile, index=False)
-
     evaluate(outputfile, truthfile)
 
 #===

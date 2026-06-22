@@ -22,7 +22,7 @@
 
 - This file contains the names of required input and output csv files.
 
-### Input/Output
+### input/output
 
 - These folders contain csv files that are used for inputs and output. 
 
@@ -34,4 +34,6 @@
 ## Development Timeline
 
 - (May 2026 - July 2026) within the suriem program SURIEM REU at MSU.
+
+    - June 20 22 computedknots.csv computet within the <a href = "https://docs.icer.msu.edu/">HPCC</a> at MSU.
 
