@@ -8,4 +8,18 @@ trials = [
     ['knotspositivealternating.csv', 'computedpositivealternating.csv', 'knotspositivealternatingtruth.csv']
 ]
 
+#===
+# Path
+#---
+# Header
+header = 'Computing sl3/'
+
+#---
+# Input
+inputfolder = header+'input/'
+
+#---
+# Output
+outputfolder = header+'output/'
+
 # Please note that this naming convention comes after a few of the computed states

@@ -3,7 +3,7 @@
 import sympy as sm
 import random as r
 import pandas as pd
-from trials import trials
+from trials import trials, inputfolder, outputfolder
 
 #===
 # Global variables
@@ -125,11 +125,7 @@ def main(inputfile, outputtruth, outputfile = None, moves = 0):
 if __name__ == "__main__":
 
     #---
-    # Input Folders
-    inputfolder = 'input/'
-
-    #---
     # Input FIles
-    inputknots, _, truthfile = trials[1]
+    inputknots, _, truthfile = trials[2]
 
     main(inputfolder+inputknots, inputfolder+truthfile)

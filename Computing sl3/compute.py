@@ -6,7 +6,7 @@ import pandas as pd
 import sympy as sm
 from statesum import sl3
 from data import collect, prepare
-from trials import trials
+from trials import trials, inputfolder, outputfolder
 
 #===
 # Evaluate the algorithm
@@ -32,15 +32,8 @@ def evaluate(computedfile, truthfile):
     print("errors: \n", errors)
 
 #===
-# Path variables
-#---
-# Input/Output folders
-inputfolder = 'input/'
-outputfolder = 'output/'
-
-#---
 # Computed sl3s
-inputknots, outputsl3s, truthfile = trials[0]
+inputknots, outputsl3s, truthfile = trials[2]
 
 #===
 # Main Method

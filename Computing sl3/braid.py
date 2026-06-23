@@ -1,132 +1,21 @@
-# Compute the state sum of a knot
-# Input: Knot or link
-# Output: State Sum
+# Input: An open web
+# Output: Expansion in terms of the Basis
 
 #===
 # Imports
 import sympy as sm
 
 #===
+# Variables
+#---
 # Quantum moves
 q = sm.var('q')
 quantum2 = sm.var('[2]')
 quantum3 = sm.var('[3]')
 
-#===
-# Determine knot positivity
-def positivity(pd):
-
-    assignments = {'positive': [],
-                   'negative': []}
-    signedpd = []
-    
-    while True:
-        item = pd.pop(0)
-        a, b, c, d = item
-        check = True
-
-        #---
-        # Determine the direction of b or d from outgoing strands in the pd
-        if check:
-            for next in pd:
-                w, x, y, z = next
-
-                if b == y:
-                    assignments['negative'].append(item)
-                    signedpd.append((item, 'negative'))
-                    check = False
-                    
-                elif d == y:
-                    assignments['positive'].append(item)
-                    signedpd.append((item, 'positive'))
-                    check = False
-                
-        #---
-        # Determine the direction of b or d from already determined crossings
-        if check:
-            for next in assignments["positive"]:
-                w, x, y, z,  = next
-
-                if (b == w) or (b == z) or (d == x) or (d == y):
-                    assignments['positive'].append(item)
-                    signedpd.append((item, 'positive'))
-                    check = False
-                    break
-                    
-                elif (b == x) or (b == y) or (d == w) or (d == z):
-                    assignments['negative'].append(item)
-                    signedpd.append((item, 'negative'))
-                    check = False
-                    break
-
-        if check:      
-            for next in assignments['negative']:
-                w, x, y, z = next
-
-                if (b == w) or (b == x) or (d == y) or (d == z):
-                    assignments['positive'].append(item)
-                    signedpd.append((item, 'positive'))
-                    check = False
-                    break
-                    
-                elif (b == y) or (b == z) or (d == w) or (d == x):
-                    assignments['negative'].append(item)
-                    signedpd.append((item, 'negative'))
-                    check = False
-                    break
-
-        if check:
-            pd.append(item)
-
-        if len(pd) == 0:
-            break
-
-    return signedpd
-
-#===
-# Crossing Moves
 #---
-# O move
-def Omove(signedentry):
-    crossing, sign = signedentry
-    a, b, c, d = crossing
+# Basis Elements
 
-    if sign == 'positive':
-        return [[a, b], [d, c]], q**(-2)
-    else:
-        return [[a, d], [b, c]], q**(2)
-    
-#---
-# W move
-def Wmove(signedentry):
-    crossing, sign = signedentry
-
-    if sign == 'positive':
-        return [crossing], -q**(-3)
-    else:
-        a, b, c, d = crossing
-        return [[b, c, d, a]], -q**3
-
-#===
-# Find all of the states
-def findStates(signedpd, verbose = False):
-
-    if len(signedpd) == 1:
-        return (Omove(signedpd[0]), Wmove(signedpd[0]))
-    
-    results = findStates(signedpd[1:])
-    returns = []
-
-    for result in results:
-        state, phi = result
-
-        omove, ophi = Omove(signedpd[0])
-        wmove, wphi = Wmove(signedpd[0])
-
-        returns.append((omove + state, phi * ophi))
-        returns.append((wmove + state, phi * wphi))
-
-    return returns
 
 #===
 # ALgorithm subroutines
@@ -588,73 +477,14 @@ def evaluateState(state, verbose = False):
 
     return qState
 
-#===
-# Compute the sl3 polynomial
-#---
-# Perform State Sum
-def stateSum(pd, verbose = False):
-
-    #---
-    # Determine states
-    signedpd = positivity(pd)
-    states = findStates(signedpd)
-
-    #---
-    # Compute y(s)
-    ys = []
-    for i in range(len(states)):
-        if verbose:
-            print("Computing state ", i)
-        state, phi = states[i]
-        llWll = evaluateState(state)
-        ys.append(phi * llWll)
-
-        if verbose:
-            print("State: ", i)
-            print(ys[-1])
-
-    #---
-    # Summate over y(s)s
-    llDll = 0
-    for y in ys:
-        llDll += y
-
-    if verbose:
-        print("")
-        print("--- Evaluation ---")
-        print(f"llDll = {llDll}")
-        print("")
-    
-    return llDll
-
-#---
-# Simplify sl3
-def simplify(llDll):
-    q2 = (q + q**(-1))
-    q3 = (q**2 + 1 + q**(-2))
-    return llDll.subs({quantum2:q2, quantum3:q3}).expand()
-
-#---
-# sl3 driver
-def sl3(pd):
-    llDll = stateSum(pd)
-    simplified = simplify(llDll)
-    return simplified
-
-#===
-# Testing
-#---
-# Compute a state
-def evaluateOne(pd, i):
-    state = findStates(positivity(pd))[i]
-    web, phase = state
-    evaluateState(web)
-
 pd_8_18 = 	[[6,2,7,1],[8,3,9,4],[16,11,1,12],[2,14,3,13],[4,15,5,16],[10,6,11,5],[12,7,13,8],[14,10,15,9]]
 pd_11a_266 = [[12,6,13,5],[4,18,5,17],[20,16,21,15],[16,10,17,9],[22,13,1,14],[2,19,3,20],[8,21,9,22], [6,2,7,1],[10,3,11,4],[14,7,15,8],[18,11,19,12]]
 pd_11n_130 = [[4,2,5,1],[15,22,16,1],[10,3,11,4],[2,11,3,12],[9,17,10,16],[17,13,18,12],[7,14,8,15],[5,18,6,19],[19,6,20,7],[13,21,14,20],[21,9,22,8]]
-#---
+pd_paper = [[5, 2, 6, 1], [4, 5, 1, 8], [12, 3, 9, 2], [3, 12, 4, 11], [9, 7, 10, 6], [7, 11, 8, 10]]
+pd_3_1 = [[6, 4, 1, 3], [2, 6, 3, 5], [4, 2, 5, 1]]
+
+#===
 # Main
 if __name__ == '__main__':
-    print(sl3(pd_11n_130))
-    #print(sl3(pd_11a_266))
+    #print(sl3(pd_paper))
+    print(evaluateState(pd_paper, -1))
