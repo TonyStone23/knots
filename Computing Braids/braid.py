@@ -5,6 +5,7 @@
 # Imports
 import sympy as sm
 import braids
+from printing import basis, display, seebraid
 
 #===
 # Variables
@@ -16,12 +17,7 @@ quantum3 = sm.var('[3]')
 
 #---
 # Basis Elements
-b0 = sm.var('b0')
-b1 = sm.var('b1')
-b2 = sm.var('b2')
-b3 = sm.var('b3')
-b4 = sm.var('b4')
-b5 = sm.var('b5')
+b0, b1, b2, b3, b4, b5 = basis
 
 #===
 # ALgorithm subroutines
@@ -390,7 +386,7 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
 # Main ALgorithm
 #---
 # Compute a Web
-def evaluate(top, bottom, web, verbose = True):
+def evaluate(top, bottom, web, verbose = False):
 
     qweb = 1
     squares = True
@@ -423,40 +419,40 @@ def evaluate(top, bottom, web, verbose = True):
                 if len(item) == 4:
                     heldwebs.append(item)
                 
-                if len(heldwebs) == 1:
-                    l, m, n, o = heldwebs[0]
+            if len(heldwebs) == 1:
+                l, m, n, o = heldwebs[0]
 
-                    if (o == x) and (l == y):
-                        web = []
-                        qweb = qweb * b1
-                    
-                    elif (o == y) and (l == z):
-                        web = []
-                        qweb = qweb * b2
-            
-                if len(heldwebs) == 2:
-                    l, m, n, o = heldwebs[0]
-                    q, r, s, t = heldwebs[1]
-
-                    if t == m:
-                        web = []
-                        qweb = qweb * b3
-
-                    elif l == s:
-                        web = []
-                        qweb = qweb * b3
-                    
-                    elif q == n:
-                        web = []
-                        qweb = qweb * b4
-
-                    elif o == r:
-                        web = []
-                        qweb = qweb * b4
-
-                if len(heldwebs) == 0:
+                if (o == x) and (l == y):
                     web = []
-                    qweb = qweb * b5
+                    qweb = qweb * b1
+                
+                elif (o == y) and (l == z):
+                    web = []
+                    qweb = qweb * b2
+        
+            elif len(heldwebs) == 2:
+                l, m, n, o = heldwebs[0]
+                q, r, s, t = heldwebs[1]
+
+                if t == m:
+                    web = []
+                    qweb = qweb * b3
+
+                elif l == s:
+                    web = []
+                    qweb = qweb * b3
+                
+                elif q == n:
+                    web = []
+                    qweb = qweb * b4
+
+                elif o == r:
+                    web = []
+                    qweb = qweb * b4
+
+            if len(heldwebs) == 0:
+                web = []
+                qweb = qweb * b5
 
         #~~~
         # Resolve strands
@@ -552,5 +548,9 @@ def evaluate(top, bottom, web, verbose = True):
 # Main
 if __name__ == '__main__':
     top, bottom, web = braids.braid01
-    evaluate(top, bottom, web)
+
+    print("\nInput Braid:")
+    seebraid(top, bottom, web)
+    print("\nEvaluated ouput:")
+    display(evaluate(top, bottom, web))
     pass
