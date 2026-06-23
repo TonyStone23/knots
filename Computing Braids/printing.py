@@ -61,6 +61,18 @@ def display(expr):
 
 basis = [sm.Symbol('b0'), sm.Symbol('b1'), sm.Symbol('b2'), sm.Symbol('b3'), sm.Symbol('b4'), sm.Symbol('b5')]
 
+braidelement = [
+r""" |   \ /
+|    |
+ |   / \
+""",
+
+r"""  \ /   |
+   |    |
+  / \   |
+"""
+]
+
 def seebraid(top, bottom, web):
 
     braid = r""""""
@@ -72,13 +84,13 @@ def seebraid(top, bottom, web):
         for section in undrawn:
             q, r, s, t = section
             if (a == s) and (b == r):
-                braid += basissymbols[1]
+                braid += braidelement[0]
                 undrawn.remove(section)
                 a = t
                 b = q
             
             elif (b == s) and (c == r):
-                braid += basissymbols[2]
+                braid += braidelement[1]
                 undrawn.remove(section)
                 b = t
                 c = q

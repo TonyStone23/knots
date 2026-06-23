@@ -24,22 +24,33 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
 - **trials.py**
 
+    - This file contains paths to individual files.
+
     - This file contains the names of required input and output csv files.
 
 - **input/output**
 
     - These folders contain csv files that are used for inputs and output. 
 
-        - Any file that is input goes to "input".
+        - Any file that is an input to another process goes into "input".
         - Computed sl3s go into "output".
 
-    - Folders should be recorded in **trials.py**.
+    - File names should be recorded in **trials.py**.
 
 ### Computing Braids/
 
 - **braids.py**
 
     - This file has the computation which reduces an unclosed braid to a linear combination of basis elements.
+
+- **inputs.py**
+
+    - This file contains different unclosed braids.
+
+- **prinitng.py**
+
+    - This file contains the tools in order to display braids and basis elements.
+            
 
 ## Development Timeline
 

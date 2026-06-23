@@ -4,7 +4,7 @@
 #===
 # Imports
 import sympy as sm
-import braids
+import inputs
 from printing import basis, display, seebraid
 
 #===
@@ -547,7 +547,7 @@ def evaluate(top, bottom, web, verbose = False):
 #===
 # Main
 if __name__ == '__main__':
-    top, bottom, web = braids.braid01
+    top, bottom, web = inputs.braid01
 
     print("\nInput Braid:")
     seebraid(top, bottom, web)
