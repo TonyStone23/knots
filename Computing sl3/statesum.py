@@ -659,4 +659,4 @@ pd_3_1 = [[6, 4, 1, 3], [2, 6, 3, 5], [4, 2, 5, 1]]
 # Main
 if __name__ == '__main__':
     print(sl3(pd_paper))
-    print(evaluateState(pd_paper, -1))
+    #print(evaluateState(pd_paper, -1))

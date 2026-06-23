@@ -1,37 +1,45 @@
 # Knots
 
-Computing the sl3 invariant from the PD code representation of a knot or link.
+Computations relating to the sl3 invariant from the PD code representation of a knot or link.
 
 ## Project Components
 
-### statesum.py
+### Computing sl3/
 
-- This file contains the algorithm to compute the sl3 invariant of knots and links.
+- **statesum.py**
 
-### compute.py
+    - This file contains the algorithm to compute the sl3 invariant of knots and links.
 
-- This file is used to compute large amounts of knots/links. 
+- **compute.py**
 
-- File parameters recorded and input from **trials.py**.
+    - This file is used to compute large amounts of knots/links. 
 
-### data.py
+    - File parameters recorded and input from **trials.py**.
 
-- This file contains the tools to manage knot datasets. 
+- **data.py**
 
-- Can be used to generate a set with RI invariants applied to them.
+    - This file contains the tools to manage knot datasets. 
 
-### trials.py
+    - Can be used to generate a set with RI invariants applied to them.
 
-- This file contains the names of required input and output csv files.
+- **trials.py**
 
-### input/output
+    - This file contains the names of required input and output csv files.
 
-- These folders contain csv files that are used for inputs and output. 
+- **input/output**
 
-    - Any file that is input goes to "input".
-    - Computed sl3s go into "output".
+    - These folders contain csv files that are used for inputs and output. 
 
-- Folders should be recorded in **trials.py**.
+        - Any file that is input goes to "input".
+        - Computed sl3s go into "output".
+
+    - Folders should be recorded in **trials.py**.
+
+### Computing Braids/
+
+- **braids.py**
+
+    - This file has the computation which reduces an unclosed braid to a linear combination of basis elements.
 
 ## Development Timeline
 
