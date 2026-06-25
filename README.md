@@ -39,13 +39,21 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
 ### Computing Braids/
 
+- **shell.py**
+
+    - This file serves as the shell for running a braid computation.
+
 - **braids.py**
 
     - This file has the computation which reduces an unclosed braid to a linear combination of basis elements.
 
-- **inputs.py**
+- **webs.py**
 
-    - This file contains different unclosed braids.
+    - This file contains the definitions for the basis elements, and other braids.
+
+        - Convention for definint a braid is included
+    
+    - This file contains the function definition to compose two braids.
 
 - **prinitng.py**
 

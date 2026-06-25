@@ -4,7 +4,7 @@
 #===
 # Imports
 import sympy as sm
-from webs import Braid
+from webs import Braid, compose
 from printing import basis, display, seebraid
 
 #===
@@ -23,7 +23,7 @@ b0, b1, b2, b3, b4, b5 = basis
 # ALgorithm subroutines
 #---
 # resolve a strand
-def resolveStrands(web, qweb, verbose = False):
+def resolveStrands(top, bottom, web, qweb, verbose = False):
     cycle = False
     newweb = web.copy()
     altered = False
@@ -44,6 +44,20 @@ def resolveStrands(web, qweb, verbose = False):
                 if verbose:
                     print("--> next:", next)
 
+                #---
+                # Resolve a 
+                if a in top and adda:
+                    addb = False
+                    cycle = True
+                    top = [i if a != a else b for i in top]
+                    altered = True
+                
+                if a in bottom and adda:
+                    addb = False
+                    cycle = True
+                    bottom = [i if a != a else b for i in bottom]
+                    altered = True
+                
                 if a in next and adda:
                     addb = False
                     cycle = True
@@ -62,6 +76,19 @@ def resolveStrands(web, qweb, verbose = False):
                         print("    --> adding", [i if -a != i else -b for i in next])
                     altered = True
                     
+                #---
+                # Resolve b
+                if b in top and adda:
+                    addb = False
+                    cycle = True
+                    top = [i if b != i else a for i in top]
+                    altered = True
+                
+                if b in bottom and adda:
+                    addb = False
+                    cycle = True
+                    bottom = [i if b != i else a for i in bottom]
+                    altered = True
 
                 if b in next and addb:
                     adda = False
@@ -72,14 +99,16 @@ def resolveStrands(web, qweb, verbose = False):
                         print("    --> adding", [i if b != i else a for i in next])
                     altered = True
 
-                if -b in next and addb:
+                elif -b in next and addb:
                     adda = False
                     cycle = True
                     newweb.remove(next)
                     newweb.insert(0, [i if -b != i else -a for i in next])
                     if verbose:
                         print("    --> adding", [i if -b != i else -a for i in next])
-                    altered = True  
+                    altered = True
+
+
 
             if verbose:
                 print("cycling", cycle)
@@ -87,7 +116,7 @@ def resolveStrands(web, qweb, verbose = False):
     if cycle:
         if verbose:
             print("cycling on: ", newweb)
-        return resolveStrands(newweb, qweb)
+        return resolveStrands(top, bottom, newweb, qweb)
     else:
         return newweb, qweb, altered
     
@@ -301,7 +330,7 @@ def resolveSquares(top, bottom, web, qweb):
 # Resolve a square with three components
 #~~~
 # Shell Routine
-def resolveThreeSquare(top, bottom, web, qweb, verbose = True):
+def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
 
     newweb = web.copy()
 
@@ -386,7 +415,7 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = True):
 # Main ALgorithm
 #---
 # Compute a Web
-def evaluate(top, bottom, web, verbose = True):
+def evaluate(top, bottom, web, verbose = False):
 
     qweb = 1
     squares = True
@@ -395,7 +424,8 @@ def evaluate(top, bottom, web, verbose = True):
     # Do not check for squares unless the other subroutines have not altered the web
     altered = False
 
-    while web:
+    reduce = True
+    while reduce:
 
         #~~~
         # Check if the web has reduced.
@@ -409,19 +439,13 @@ def evaluate(top, bottom, web, verbose = True):
 
         #~~~
         # b0 could have up to three components, but none are larger than length 2
-        if len(web) <= 3:
-            nonstrands = 0
-            for item in web:
-                if len(item) > 2:
-                    nonstrands += 1
-
-                if nonstrands == 0:
-                    web = []
-                    qweb = qweb * b0
+        if top == bottom:
+            qweb = qweb * b0
+            return qweb
 
         #~~~
         # Other cases have 1 or two components
-        if len(web) <= 2:
+        elif len(web) <= 2:
             heldwebs = []
 
             #---
@@ -441,6 +465,8 @@ def evaluate(top, bottom, web, verbose = True):
                 elif (o == x) and (l == y):
                     web = []
                     qweb = qweb * b2
+                
+                return qweb
         
             # Two webs form a basis
             elif len(heldwebs) == 2:
@@ -463,11 +489,15 @@ def evaluate(top, bottom, web, verbose = True):
                     web = []
                     qweb = qweb * b4
 
+                return qweb
+
             #---
             # Remaining components must be 'pitchforks'
             if len(heldwebs) == 0:
-                web = []
+                
                 qweb = qweb * b5
+
+                return qweb
 
         #~~~
         # Resolve strands
@@ -475,7 +505,7 @@ def evaluate(top, bottom, web, verbose = True):
             print("before resolve strands")
             print(f"    qweb: {qweb} --- web: {web}")
 
-        web, qweb, altered = resolveStrands(web, qweb)
+        web, qweb, altered = resolveStrands(top, bottom, web, qweb)
         if altered:
             squares = False
 
@@ -543,11 +573,21 @@ def evaluate(top, bottom, web, verbose = True):
         # For next loop
         squares = True
 
+        if web == []:
+            reduce = False
+
     return qweb
 
 #===
+# Simplify
+def simplify(expression):
+    q2 = (q + q**(-1))
+    q3 = (q**2 + 1 + q**(-2))
+    return expression.subs({quantum2:q2, quantum3:q3}).expand()
+
+#===
 # Main Method
-def main(braid, showinput = True):
+def main(braid, showinput = False):
 
     top, bottom, web = braid
     if showinput:
@@ -555,8 +595,9 @@ def main(braid, showinput = True):
         seebraid(top, bottom, web)
 
     print("\nEvaluated ouput:")
-    display(evaluate(top, bottom, web))
-
+    evaluation = evaluate(top, bottom, web)
+    evaluation = simplify(evaluation)
+    display(evaluation)
 
 if __name__ == '__main__':
-    main(Braid.braid02, False)
+    main(compose(Braid.b2, Braid.b4), True)
