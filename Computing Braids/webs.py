@@ -3,7 +3,7 @@
 #---
 # PD Code convention:
 
-# Unclosed braids contain a tuple: (_top_, _bottom_, _web_).
+# Unclosed braids contain a tuple: (top, bottom, web).
 
     # top := the three exiting labels.
 
@@ -11,6 +11,8 @@
 
     # web := PD code of the web.
 
+#===
+# Braid class to serve as pointers to pre-defined braids 
 class Braid:
     #---
     # Basis Element Definition
@@ -47,7 +49,11 @@ class Braid:
     braid02 = ([7, 11, 10],
             [1, 2, 3],
             [[9, 10, 11, 8], [6, 8, 7, 5], [3, 9, 6, 4], [2, 4, 5, 1]])
-    
+
+#===
+# Compute the composition of two braids
+
+    # Needs improvement, composition with components of 3 needs attention.
 def compose(w2, w1):
     """
     **Input**: The tuple representing a braid: (top, bottom, web)
@@ -56,9 +62,6 @@ def compose(w2, w1):
 
     *Please note that the input order matters*         
     """
-
-    print(w1)
-    print(w2)
 
     top1, bottom1, web1 = w1
     top2, bottom2, web2 = w2
@@ -117,7 +120,5 @@ def compose(w2, w1):
             top1 = [i if i != c else z for i in top1]
             subbedc = True
             add = False
-
-        print(relabelledweb)
 
     return (top1, bottom2, relabelledweb + web2)

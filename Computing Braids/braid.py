@@ -150,7 +150,7 @@ def resolveThreeComponents(web, qweb):
                             add = False
                             altered = True
 
-                        elif (b == x) and (c == y):
+                        elif (-b == y) and (-c == x):
                             newweb.remove(next)
                             qweb = qweb * quantum2
                             newweb.insert(0, [a, -z, -w])
@@ -290,43 +290,6 @@ def resolveStacks(web, qweb):
     return newweb, qweb, altered
 
 #---
-# Resolve a square case
-def resolveSquares(top, bottom, web, qweb):
-    
-    newweb = web.copy()
-
-    for item in newweb:
-
-        if len(item) == 4:
-            a, b, c, d = item
-            newweb.remove(item)
-            add = True
-            
-            for next in newweb:
-
-                if len(next) == 4:
-                    w, x, y, z = next
-                    
-                    #---
-                    # Resolve a square "above" a web
-                    if ((a == x) and (b == w)):
-                        newweb.remove(next)
-                        return [], qweb * (evaluate(top, bottom, newweb.copy() + [[d, c], [y, z]])
-                                              + evaluate(top, bottom, newweb.copy() + [[c, z], [d, y]]))
-                    
-                    #---
-                    # Resolve a square "beneath" a web
-                    elif ((d == y) and (c == z)):
-                        newweb.remove(next)
-                        return [], qweb * (evaluate(top, bottom, newweb.copy() + [[a, b], [w, x]])
-                                              + evaluate(top, bottom, newweb.copy() + [[b, w], [a, x]]))
-                    
-            if add:
-                newweb.insert(0, item)
-
-    return newweb, qweb
-
-#---
 # Resolve a square with three components
 #~~~
 # Shell Routine
@@ -334,7 +297,7 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
 
     newweb = web.copy()
 
-    for first in newweb:
+    for first in web:
 
         if len(first) == 4:
             if verbose:
@@ -415,10 +378,12 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
 # Main ALgorithm
 #---
 # Compute a Web
-def evaluate(top, bottom, web, verbose = False):
+def evaluate(top, bottom, web, verbose = True):
 
     qweb = 1
     squares = True
+
+    loops = 0
 
     #---
     # Do not check for squares unless the other subroutines have not altered the web
@@ -426,6 +391,10 @@ def evaluate(top, bottom, web, verbose = False):
 
     reduce = True
     while reduce:
+
+        loops += 1
+        #if loops >=20:
+            #break
 
         #~~~
         # Check if the web has reduced.
@@ -473,19 +442,11 @@ def evaluate(top, bottom, web, verbose = False):
                 l, m, n, o = heldwebs[0]
                 q, r, s, t = heldwebs[1]
                 
-                if q == n:
+                if (o == r) or (t == m):
                     web = []
                     qweb = qweb * b3
 
-                elif o == r:
-                    web = []
-                    qweb = qweb * b3
-
-                elif t == m:
-                    web = []
-                    qweb = qweb * b4
-
-                elif l == s:
+                elif (q == n) or (l == s):
                     web = []
                     qweb = qweb * b4
 
@@ -544,7 +505,7 @@ def evaluate(top, bottom, web, verbose = False):
         #---
         # Resolve components of three
         if verbose:
-            print("before resolve squares of three")
+            print("before resolve components of three")
             print(f"    qweb: {qweb} --- web: {web}")
 
         web, qweb, altered = resolveThreeComponents(web, qweb)
@@ -552,7 +513,7 @@ def evaluate(top, bottom, web, verbose = False):
             squares = False
 
         if verbose:
-            print("after resolve squares of three")
+            print("after resolve components of three")
             print(f"    qweb: {qweb} --- web: {web}\n")
 
         #~~~
@@ -600,4 +561,5 @@ def main(braid, showinput = False):
     display(evaluation)
 
 if __name__ == '__main__':
-    main(compose(Braid.b2, Braid.b4), True)
+    #main(Braid.braid02, True)
+    main(compose(Braid.b0, Braid.b0), True)
