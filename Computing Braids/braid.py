@@ -4,7 +4,7 @@
 #===
 # Imports
 import sympy as sm
-import inputs
+from webs import Braid
 from printing import basis, display, seebraid
 
 #===
@@ -301,7 +301,7 @@ def resolveSquares(top, bottom, web, qweb):
 # Resolve a square with three components
 #~~~
 # Shell Routine
-def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
+def resolveThreeSquare(top, bottom, web, qweb, verbose = True):
 
     newweb = web.copy()
 
@@ -366,8 +366,8 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
                                         print("Case 2")
                                         print("recursive call 1: with ", first, second, third)
 
-                                    recurseone = evaluate(newweb.copy() + [[-o, -l, -a], [y, x, b]])
-                                    recursetwo = evaluate(newweb.copy() + [[l, x, y, o], [a, b]])
+                                    recurseone = evaluate(top, bottom, newweb.copy() + [[-o, -l, -a], [y, x, b]])
+                                    recursetwo = evaluate(top, bottom, newweb.copy() + [[l, x, y, o], [a, b]])
 
                                     return [], qweb * (recurseone + recursetwo)
 
@@ -386,7 +386,7 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
 # Main ALgorithm
 #---
 # Compute a Web
-def evaluate(top, bottom, web, verbose = False):
+def evaluate(top, bottom, web, verbose = True):
 
     qweb = 1
     squares = True
@@ -402,54 +402,69 @@ def evaluate(top, bottom, web, verbose = False):
         a, b, c = top
         x, y, z = bottom
 
-        if len(web) == 3:
-            strands = 0
-            for item in web:
-                if len(item) == 3:
-                    strands += 1
+        if verbose:
+            print("top:", top)
+            print("bottom:", bottom)
+            print("web ", web)
 
-                if strands == 3:
+        #~~~
+        # b0 could have up to three components, but none are larger than length 2
+        if len(web) <= 3:
+            nonstrands = 0
+            for item in web:
+                if len(item) > 2:
+                    nonstrands += 1
+
+                if nonstrands == 0:
                     web = []
                     qweb = qweb * b0
 
-        elif len(web) == 2:
+        #~~~
+        # Other cases have 1 or two components
+        if len(web) <= 2:
             heldwebs = []
 
+            #---
+            # count the components of length 4
             for item in web:
                 if len(item) == 4:
                     heldwebs.append(item)
                 
+            # One web forms a basis
             if len(heldwebs) == 1:
                 l, m, n, o = heldwebs[0]
 
-                if (o == x) and (l == y):
+                if (o == y) and (l == z):
                     web = []
                     qweb = qweb * b1
-                
-                elif (o == y) and (l == z):
+
+                elif (o == x) and (l == y):
                     web = []
                     qweb = qweb * b2
         
+            # Two webs form a basis
             elif len(heldwebs) == 2:
                 l, m, n, o = heldwebs[0]
                 q, r, s, t = heldwebs[1]
-
-                if t == m:
-                    web = []
-                    qweb = qweb * b3
-
-                elif l == s:
-                    web = []
-                    qweb = qweb * b3
                 
-                elif q == n:
+                if q == n:
                     web = []
-                    qweb = qweb * b4
+                    qweb = qweb * b3
 
                 elif o == r:
                     web = []
+                    qweb = qweb * b3
+
+                elif t == m:
+                    web = []
                     qweb = qweb * b4
 
+                elif l == s:
+                    web = []
+                    qweb = qweb * b4
+
+            #---
+            # Remaining components must be 'pitchforks'
             if len(heldwebs) == 0:
                 web = []
                 qweb = qweb * b5
@@ -496,10 +511,10 @@ def evaluate(top, bottom, web, verbose = False):
             print("after resolve bubble")
             print(f"    qweb: {qweb} --- web: {web}\n")
 
-        #~~~
-        # Resolve Components of three
+        #---
+        # Resolve components of three
         if verbose:
-            print("before resolve components of three")
+            print("before resolve squares of three")
             print(f"    qweb: {qweb} --- web: {web}")
 
         web, qweb, altered = resolveThreeComponents(web, qweb)
@@ -507,27 +522,13 @@ def evaluate(top, bottom, web, verbose = False):
             squares = False
 
         if verbose:
-            print("after resolve strands")
+            print("after resolve squares of three")
             print(f"    qweb: {qweb} --- web: {web}\n")
 
-        #---
-        # Resolve squares
-        if squares:
+        #~~~
+        # Resolve squares of three components   
+        if squares and (len(web) >= 3):
 
-            #~~~
-            # Resolve squares of two components
-            if verbose:
-                print("before resolve squares of two")
-                print(f"    qweb: {qweb} --- web: {web}")
-
-            web, qweb = resolveSquares(top, bottom, web, qweb)
-
-            if verbose:
-                print("after resolve squares of two")
-                print(f"    qweb: {qweb} --- web: {web}\n")
-
-            #~~~
-            # Resolve squares of three components
             if verbose:
                 print("before resolve squares of three")
                 print(f"    qweb: {qweb} --- web: {web}")
@@ -545,12 +546,17 @@ def evaluate(top, bottom, web, verbose = False):
     return qweb
 
 #===
-# Main
-if __name__ == '__main__':
-    top, bottom, web = inputs.braid01
+# Main Method
+def main(braid, showinput = True):
 
-    print("\nInput Braid:")
-    seebraid(top, bottom, web)
+    top, bottom, web = braid
+    if showinput:
+        print("\nInput Braid:")
+        seebraid(top, bottom, web)
+
     print("\nEvaluated ouput:")
     display(evaluate(top, bottom, web))
-    pass
+
+
+if __name__ == '__main__':
+    main(Braid.braid02, False)

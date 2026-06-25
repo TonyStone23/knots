@@ -1,8 +1,11 @@
+# Code to produce pretty outputs.
+
 import sympy as sm
 from sympy.printing.pretty.pretty import PrettyPrinter
 from sympy.printing.pretty.stringpict import prettyForm
 
-# Your ASCII art — make it whatever you like!
+#===
+# Basis Symbols
 basissymbols = [
 r"""| | |
 | | |

@@ -51,6 +51,16 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
     - This file contains the tools in order to display braids and basis elements.
             
+### Computing Powers/
+
+- **basis.py** 
+
+    - This file contains the implementation of the Basis Element multiplication Table.
+
+- **exponent.py**
+
+    - This file contains the code for computing the power of an input string.
+
 
 ## Development Timeline
 
