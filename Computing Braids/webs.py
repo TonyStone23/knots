@@ -146,3 +146,11 @@ def power(braid, n):
         result = compose(result, braid)
 
     return result
+
+def build(elements):
+
+    braid = Braid.b0
+    for element in elements:
+        braid = compose (braid, element)
+
+    return braid

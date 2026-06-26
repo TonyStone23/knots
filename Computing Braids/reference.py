@@ -1,5 +1,5 @@
 from braid import main
-from webs import Braid, compose, power
+from webs import Braid, compose, power, build
 
 #===
 # Tutorial
@@ -44,4 +44,10 @@ main(braid)
 print("\n\n--- Building a braid to take its power ---")
 newBraid = compose(Braid.b2, Braid.b3)
 cubedBraid = power(newBraid, 3)
-main(cubedBraid)
+main(cubedBraid, showinput=True)
+
+#---
+# You can build a braid from a list of basis components:
+elements = [Braid.b3, Braid.b4, Braid.b2, Braid.b4, Braid.b2]
+braid = build(elements)
+main(braid, showinput=True)

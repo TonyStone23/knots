@@ -39,10 +39,6 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
 ### Computing Braids/
 
-- **shell.py**
-
-    - This file serves as the shell for running a braid computation.
-
 - **braids.py**
 
     - This file has the computation which reduces an unclosed braid to a linear combination of basis elements.
@@ -58,6 +54,14 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 - **prinitng.py**
 
     - This file contains the tools in order to display braids and basis elements.
+
+- **reference.py**
+
+    - This file serves as the shell for running a braid computation.
+
+- **sandbox.py**
+
+    - This file serves as a sandbox for braid computation
             
 ### Computing Powers/
 
