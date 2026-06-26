@@ -163,7 +163,7 @@ def resolveThreeComponents(web, qweb):
                         if x > 0:
                             pass
                             
-                        if (a == x) and (b == y) and (c == z):
+                        if (a == -x) and (b == -y) and (c == -z):
                             qweb = qweb * quantum2 * quantum3
                             newweb.remove(next)
                             add = False
@@ -378,7 +378,7 @@ def resolveThreeSquare(top, bottom, web, qweb, verbose = False):
 # Main ALgorithm
 #---
 # Compute a Web
-def evaluate(top, bottom, web, verbose = True):
+def evaluate(top, bottom, web, verbose = False):
 
     qweb = 1
     squares = True
@@ -557,9 +557,9 @@ def main(braid, showinput = False):
 
     print("\nEvaluated ouput:")
     evaluation = evaluate(top, bottom, web)
-    evaluation = simplify(evaluation)
+    evaluation = simplify(evaluation,)
     display(evaluation)
 
 if __name__ == '__main__':
     #main(Braid.braid02, True)
-    main(compose(Braid.b0, Braid.b0), True)
+    main(compose(Braid.b5, Braid.b5))

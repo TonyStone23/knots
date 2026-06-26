@@ -54,7 +54,7 @@ class Braid:
 # Compute the composition of two braids
 
     # Needs improvement, composition with components of 3 needs attention.
-def compose(w2, w1):
+def compose(w2, w1, verbose = False):
     """
     **Input**: The tuple representing a braid: (top, bottom, web)
     
@@ -67,7 +67,7 @@ def compose(w2, w1):
     top2, bottom2, web2 = w2
 
     bump = max([max(x) for x in web2] + [max(top2)] + [max(bottom2)])
-    relabelledweb = [[x + bump for x in component] for component in web1]
+    relabelledweb = [[x + bump if x > 0 else -(abs(x) + bump) for x in component] for component in web1]
     top1 = [x + bump for x in top1]
     bottom1 = [x + bump for x in bottom1]
 
@@ -78,6 +78,9 @@ def compose(w2, w1):
     x, y, z = top2
 
     while not (subbeda and subbedb and subbedc):
+
+        if verbose:
+            print(relabelledweb, "Top", top1, "Bottom2 ", bottom2, "   Bottom1: ",bottom1)
         
         #---
         # Check labels in the web
@@ -86,22 +89,38 @@ def compose(w2, w1):
             add = True
 
             if a in item:
-                relabelledweb.append([i if i != a else x for i in item])
+                item = [i if i != a else x for i in item]
                 subbeda = True
-                add = False
+                add = True
 
-            elif b in item:
-                relabelledweb.append([i if i != b else y for i in item])
+            if -a in item:
+                item = [i if i != -a else -x for i in item]
+                subbeda = True
+                add = True
+
+            if b in item:
+                item = [i if i != b else y for i in item]
                 subbedb = True
-                add = False
+                add = True
 
-            elif c in item:
-                relabelledweb.append([i if i != c else z for i in item])
+            if -b in item:
+                item = [i if i != -b else -y for i in item]
+                subbedb = True
+                add = True
+
+            if c in item:
+                item = [i if i != c else z for i in item]
                 subbedc = True
-                add = False
+                add = True
+
+            if -c in item:
+                item = [i if i != -c else -z for i in item]
+                subbedc = True
+                add = True
 
             if add:
                 relabelledweb.append(item)
+                add = False
         
         #---
         # Check labels in the top strand
@@ -109,16 +128,13 @@ def compose(w2, w1):
         if a in top1:
             top1 = [i if i != a else x for i in top1]
             subbeda = True
-            add = False
 
         elif b in top1:
             top1 = [i if i != b else y for i in top1]
             subbedb = True
-            add = False
 
         elif c in top1:
             top1 = [i if i != c else z for i in top1]
             subbedc = True
-            add = False
 
     return (top1, bottom2, relabelledweb + web2)
