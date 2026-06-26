@@ -62,17 +62,6 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 - **sandbox.py**
 
     - This file serves as a sandbox for braid computation
-            
-### Computing Powers/
-
-- **basis.py** 
-
-    - This file contains the implementation of the Basis Element multiplication Table.
-
-- **exponent.py**
-
-    - This file contains the code for computing the power of an input string.
-
 
 ## Development Timeline
 

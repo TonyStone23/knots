@@ -25,13 +25,13 @@ from webs import Braid, compose, power, build
 # Tutorial
 #---
 # main computes an actual braid from "Braid"
-print("\n\n--- Heres main ---")
+print("\n\n--- Here's main ---")
 main(Braid.braid02, showinput=True)
 
 #---
 # You can compute the composition of two braids.
 # Consider basis elements b1, and b2:
-print("\n\n--- Heres braid composition ---")
+print("\n\n--- Here's braid composition ---")
 braid = compose(Braid.b3, compose(Braid.b3, Braid.b4))
 main(braid)
 
@@ -43,7 +43,7 @@ main(Braid.braid01, showinput = True)
 
 #--- 
 # You can take the power of an input braid
-print("\n\n--- heres a power example ---")
+print("\n\n--- Here's a power example ---")
 braid = power(Braid.b5, 3)
 main(braid)
 
