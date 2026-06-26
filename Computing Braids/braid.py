@@ -560,6 +560,8 @@ def main(braid, showinput = False):
     evaluation = simplify(evaluation,)
     display(evaluation)
 
+    return evaluation
+
 if __name__ == '__main__':
     #main(Braid.braid02, True)
     main(compose(Braid.b5, Braid.b5))

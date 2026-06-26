@@ -1,12 +1,12 @@
 from braid import main
-from webs import Braid, compose
+from webs import Braid, compose, power
 
 #===
 # Tutorial
 #---
 # main computes an actual braid from "Braid"
 print("Heres main")
-main(Braid.braid02)
+main(Braid.braid02, showinput=True)
 
 #---
 # Compose(w2, w1) allows you to compose two braids:
@@ -18,7 +18,7 @@ main(Braid.braid02)
 # You can compute the composition of two braids.
 # Consider basis elements b1, and b2:
 print("heres composition")
-braid = compose(Braid.b1, Braid.b2)
+braid = compose(Braid.b3, compose(Braid.b3, Braid.b4))
 main(braid)
 
 #---
@@ -26,6 +26,13 @@ main(braid)
 # You can see the braid as it is input:
 print("Here's a picture")
 main(Braid.braid01, showinput = True)
+
+#--- 
+# You can take the power of an input braid
+print("heres a power example")
+
+braid = power(Braid.b3, 3)
+main(braid, showinput= True)
 
 #===
 # Additional Notes

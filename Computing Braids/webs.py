@@ -49,7 +49,7 @@ class Braid:
     braid02 = ([7, 11, 10],
             [1, 2, 3],
             [[9, 10, 11, 8], [6, 8, 7, 5], [3, 9, 6, 4], [2, 4, 5, 1]])
-
+    
 #===
 # Compute the composition of two braids
 
@@ -138,3 +138,11 @@ def compose(w2, w1, verbose = False):
             subbedc = True
 
     return (top1, bottom2, relabelledweb + web2)
+
+def power(braid, n):
+
+    result = Braid.b0
+    for i in range(n):
+        result = compose(result, braid)
+
+    return result
