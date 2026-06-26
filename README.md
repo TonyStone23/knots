@@ -47,7 +47,7 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
     - This file contains the definitions for the basis elements, and other braids.
 
-        - Convention for definint a braid is included
+        - Convention for defining a braid is included.
     
     - This file contains the function definition to compose two braids.
 
@@ -61,7 +61,7 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
 - **sandbox.py**
 
-    - This file serves as a sandbox for braid computation
+    - This file serves as a sandbox for braid computation.
 
 ## Development Timeline
 
