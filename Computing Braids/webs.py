@@ -141,9 +141,9 @@ def compose(w2, w1, verbose = False):
 
 def power(braid, n):
 
-    result = Braid.b0
-    for i in range(n):
-        result = compose(result, braid)
+    result = braid
+    for i in range(1, n):
+        result = compose(result, result)
 
     return result
 

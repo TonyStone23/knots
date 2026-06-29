@@ -7,6 +7,9 @@ from printing import seebraid
 #---
 # The basis Elements are Braid.b(0-5) and correspond
 # to the order you have written them in notes.
+#---
+# The class "Braid" is really meant to be a sort of 'container',
+# This is not an object-oriented implementation.
 
 #---
 # compose(w2, w1) allows you to compose two braids:
@@ -56,7 +59,7 @@ main(braid)
 # You can build braids as a composition of basis elements, and take their power.
 print("\n\n--- Building a braid to take its power ---")
 newBraid = compose(Braid.b2, Braid.b3)
-cubedBraid = power(newBraid, 8)
+cubedBraid = power(newBraid, 3)
 main(cubedBraid, showinput=True)
 
 #---
