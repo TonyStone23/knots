@@ -151,6 +151,6 @@ def build(elements):
 
     braid = Braid.b0
     for element in elements:
-        braid = compose (braid, element)
+        braid = compose(braid, element)
 
     return braid

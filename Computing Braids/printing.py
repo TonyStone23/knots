@@ -226,7 +226,8 @@ r"""  \ /   |
 """
 ]
 
-def seebraid(top, bottom, web):
+def seebraid(inputbraid):
+    top, bottom, web = inputbraid
 
     braid = r""""""
     a, b, c = top

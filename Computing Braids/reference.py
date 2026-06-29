@@ -1,5 +1,6 @@
 from braid import main
 from webs import Braid, compose, power, build
+from printing import seebraid
 
 #===
 # Convention and Function Notes
@@ -40,6 +41,10 @@ main(braid)
 # You can see the braid as it is input:
 print("\n\n--- Here's a picture ---")
 main(Braid.braid01, showinput = True)
+# You could also just seebraid it
+print("\n\n--- Same picutre, but just the drawing ---")
+
+seebraid(Braid.braid01)
 
 #--- 
 # You can take the power of an input braid
@@ -51,7 +56,7 @@ main(braid)
 # You can build braids as a composition of basis elements, and take their power.
 print("\n\n--- Building a braid to take its power ---")
 newBraid = compose(Braid.b2, Braid.b3)
-cubedBraid = power(newBraid, 3)
+cubedBraid = power(newBraid, 8)
 main(cubedBraid, showinput=True)
 
 #---

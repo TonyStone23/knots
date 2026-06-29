@@ -553,7 +553,7 @@ def main(braid, showinput = False):
     top, bottom, web = braid
     if showinput:
         print("\nInput Braid:")
-        seebraid(top, bottom, web)
+        seebraid(braid)
 
     print("\nEvaluated ouput:")
     evaluation = evaluate(top, bottom, web)
