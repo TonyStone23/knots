@@ -20,13 +20,13 @@ class Braid:
           [1, 2, 3],
           [])
     
-    b1 = ([1, 4, 5],
-          [1, 2, 3],
-          [[3, 5, 4, 2]])
-    
-    b2 = ([4, 5, 3],
+    b1 = ([4, 5, 3],
           [1, 2, 3],
           [[2, 5, 4, 1]])
+    
+    b2 = ([1, 4, 5],
+          [1, 2, 3],
+          [[3, 5, 4, 2]])
     
     b3 = ([5, 6, 7],
           [1, 2, 3],
@@ -50,6 +50,10 @@ class Braid:
             [1, 2, 3],
             [[9, 10, 11, 8], [6, 8, 7, 5], [3, 9, 6, 4], [2, 4, 5, 1]])
     
+    garside = ([14, 15, 10],
+               [1, 2, 3],
+               [[9, 15, 14, 4], [3, 10, 9, 5], [2, 5, 4, 1]])
+    
 #===
 # Compute the composition of two braids
 
@@ -63,8 +67,8 @@ def compose(w2, w1, verbose = False):
     *Please note that the input order matters*         
     """
 
-    top1, bottom1, web1 = w1
-    top2, bottom2, web2 = w2
+    top1, bottom1, web1 = w2
+    top2, bottom2, web2 = w1
 
     bump = max([max(x) for x in web2] + [max(top2)] + [max(bottom2)])
     relabelledweb = [[x + bump if x > 0 else -(abs(x) + bump) for x in component] for component in web1]
@@ -141,9 +145,9 @@ def compose(w2, w1, verbose = False):
 
 def power(braid, n):
 
-    result = braid
-    for i in range(1, n):
-        result = compose(result, result)
+    result = Braid.b0
+    for i in range(0, n):
+        result = compose(braid, result)
 
     return result
 

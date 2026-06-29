@@ -4,7 +4,7 @@
 #===
 # Imports
 import sympy as sm
-from webs import Braid, compose
+from webs import Braid, compose, build
 from printing import basis, display, seebraid
 
 #===
@@ -18,6 +18,40 @@ quantum3 = sm.var('[3]')
 #---
 # Basis Elements
 b0, b1, b2, b3, b4, b5 = basis
+
+#===
+# Crossing Moves
+#---
+# O move
+def Omove(crossing):
+    a, b, c, d = crossing
+    return [[a, b], [d, c]], q**(-2)
+    
+#---
+# W move
+def Wmove(crossing):
+    return [crossing], -q**(-3)
+
+#===
+# Find all of the webs
+def findwebs(inputweb, verbose = False):
+
+    if len(inputweb) == 1:
+        return (Omove(inputweb[0]), Wmove(inputweb[0]))
+    
+    results = findwebs(inputweb[1:])
+    returns = []
+
+    for result in results:
+        web, phi = result
+
+        omove, ophi = Omove(inputweb[0])
+        wmove, wphi = Wmove(inputweb[0])
+
+        returns.append((omove + web, phi * ophi))
+        returns.append((wmove + web, phi * wphi))
+
+    return returns
 
 #===
 # ALgorithm subroutines
@@ -34,9 +68,34 @@ def resolveStrands(top, bottom, web, qweb, verbose = False):
                 print("item", item)
 
             a, b = item
-            newweb.remove(item)
             adda = True
             addb = True
+
+            if a in top and adda:
+                addb = False
+                cycle = True
+                top = [i if a != i else b for i in top]
+                altered = True
+            
+            if a in bottom and adda:
+                addb = False
+                cycle = True
+                bottom = [i if a != i else b for i in bottom]
+                altered = True
+            
+            if b in top and addb:
+                adda = False
+                cycle = True
+                top = [i if b != i else a for i in top]
+                altered = True
+            
+            if b in bottom and addb:
+                adda = False
+                cycle = True
+                bottom = [i if b != i else a for i in bottom]
+                altered = True
+
+            newweb.remove(item)
 
             #---
             # Search for a strand, and replace the label not found in a component where a label is found
@@ -46,18 +105,6 @@ def resolveStrands(top, bottom, web, qweb, verbose = False):
 
                 #---
                 # Resolve a 
-                if a in top and adda:
-                    addb = False
-                    cycle = True
-                    top = [i if a != a else b for i in top]
-                    altered = True
-                
-                if a in bottom and adda:
-                    addb = False
-                    cycle = True
-                    bottom = [i if a != a else b for i in bottom]
-                    altered = True
-                
                 if a in next and adda:
                     addb = False
                     cycle = True
@@ -78,18 +125,6 @@ def resolveStrands(top, bottom, web, qweb, verbose = False):
                     
                 #---
                 # Resolve b
-                if b in top and adda:
-                    addb = False
-                    cycle = True
-                    top = [i if b != i else a for i in top]
-                    altered = True
-                
-                if b in bottom and adda:
-                    addb = False
-                    cycle = True
-                    bottom = [i if b != i else a for i in bottom]
-                    altered = True
-
                 if b in next and addb:
                     adda = False
                     cycle = True
@@ -108,8 +143,6 @@ def resolveStrands(top, bottom, web, qweb, verbose = False):
                         print("    --> adding", [i if -b != i else -a for i in next])
                     altered = True
 
-
-
             if verbose:
                 print("cycling", cycle)
     
@@ -118,7 +151,7 @@ def resolveStrands(top, bottom, web, qweb, verbose = False):
             print("cycling on: ", newweb)
         return resolveStrands(top, bottom, newweb, qweb)
     else:
-        return newweb, qweb, altered
+        return top, bottom, newweb, qweb, altered
     
 #---
 # Resolve strands of three labels
@@ -289,6 +322,44 @@ def resolveStacks(web, qweb):
 
     return newweb, qweb, altered
 
+
+#---
+# Resolve a square case
+def resolveSquares(top, bottom, web, qweb):
+    
+    newweb = web.copy()
+
+    for item in newweb:
+
+        if len(item) == 4:
+            a, b, c, d = item
+            newweb.remove(item)
+            add = True
+            
+            for next in newweb:
+
+                if len(next) == 4:
+                    w, x, y, z = next
+                    
+                    #---
+                    # Resolve a square "above" a web
+                    if ((a == x) and (b == w)):
+                        newweb.remove(next)
+                        return [], qweb * (evaluate(top, bottom, newweb.copy() + [[d, c], [y, z]])
+                                              + evaluate(top, bottom, newweb.copy() + [[c, z], [d, y]]))
+                    
+                    #---
+                    # Resolve a square "beneath" a web
+                    elif ((d == y) and (c == z)):
+                        newweb.remove(next)
+                        return [], qweb * (evaluate(newweb.copy() + [[a, b], [w, x]])
+                                              + evaluate(newweb.copy() + [[b, w], [a, x]]))
+                    
+            if add:
+                newweb.insert(0, item)
+
+    return newweb, qweb
+
 #---
 # Resolve a square with three components
 #~~~
@@ -408,13 +479,10 @@ def evaluate(top, bottom, web, verbose = False):
 
         #~~~
         # b0 could have up to three components, but none are larger than length 2
-        if top == bottom:
-            qweb = qweb * b0
-            return qweb
 
         #~~~
         # Other cases have 1 or two components
-        elif len(web) <= 2:
+        if len(web) <= 2:
             heldwebs = []
 
             #---
@@ -427,13 +495,14 @@ def evaluate(top, bottom, web, verbose = False):
             if len(heldwebs) == 1:
                 l, m, n, o = heldwebs[0]
 
-                if (o == y) and (l == z):
+                if (o == x) and (l == y):
                     web = []
                     qweb = qweb * b1
 
-                elif (o == x) and (l == y):
+                elif (o == y) and (l == z):
                     web = []
                     qweb = qweb * b2
+
                 
                 return qweb
         
@@ -464,21 +533,21 @@ def evaluate(top, bottom, web, verbose = False):
         # Resolve strands
         if verbose:
             print("before resolve strands")
-            print(f"    qweb: {qweb} --- web: {web}")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
 
-        web, qweb, altered = resolveStrands(top, bottom, web, qweb)
+        top, bottom, web, qweb, altered = resolveStrands(top, bottom, web, qweb)
         if altered:
             squares = False
 
         if verbose:
             print("after resolve strands")
-            print(f"    qweb: {qweb} --- web: {web}\n")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
 
         #---
         # Resolve stacks
         if verbose:
             print("before resolve stacks")
-            print(f"    qweb: {qweb} --- web: {web}")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
 
         web, qweb, altered = resolveStacks(web, qweb)
         if altered:
@@ -486,13 +555,13 @@ def evaluate(top, bottom, web, verbose = False):
         
         if verbose:
             print("after resolve stacks")
-            print(f"    qweb: {qweb} --- web: {web}\n")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
 
         #---
         # Resolve bubbles
         if verbose:
             print("before resolve bubble")
-            print(f"    qweb: {qweb} --- web: {web}")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
 
         web, qweb, altered = resolveBubbles(web, qweb)
         if altered:
@@ -500,13 +569,13 @@ def evaluate(top, bottom, web, verbose = False):
 
         if verbose:
             print("after resolve bubble")
-            print(f"    qweb: {qweb} --- web: {web}\n")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
 
         #---
         # Resolve components of three
         if verbose:
             print("before resolve components of three")
-            print(f"    qweb: {qweb} --- web: {web}")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
 
         web, qweb, altered = resolveThreeComponents(web, qweb)
         if altered:
@@ -514,21 +583,32 @@ def evaluate(top, bottom, web, verbose = False):
 
         if verbose:
             print("after resolve components of three")
-            print(f"    qweb: {qweb} --- web: {web}\n")
+            print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
 
-        #~~~
+        #---
         # Resolve squares of three components   
-        if squares and (len(web) >= 3):
+        if squares and (len(web) >= 2):
+            
+            if verbose:
+                print("before resolve squares of three")
+                print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
+
+            web, qweb = resolveSquares(top, bottom, web, qweb)
+
+            if verbose:
+                print("after resolve squares of three")
+                print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
+
 
             if verbose:
                 print("before resolve squares of three")
-                print(f"    qweb: {qweb} --- web: {web}")
+                print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
 
             web, qweb = resolveThreeSquare(top, bottom, web, qweb)
 
             if verbose:
                 print("after resolve squares of three")
-                print(f"    qweb: {qweb} --- web: {web}\n")
+                print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
         
         #---
         # For next loop
@@ -536,6 +616,11 @@ def evaluate(top, bottom, web, verbose = False):
 
         if web == []:
             reduce = False
+            #qweb = qweb * b0
+
+        if not reduce:
+            if top == bottom:
+                qweb = qweb * b0
 
     return qweb
 
@@ -547,6 +632,42 @@ def simplify(expression):
     return expression.subs({quantum2:q2, quantum3:q3}).expand()
 
 #===
+# Perform web Sum
+def webSum(braid, verbose = False):
+    #---
+    # Determine webs
+    top, bottom, web = braid
+    webs = findwebs(web)
+
+    #---
+    # Compute y(s)
+    ys = []
+    for i in range(len(webs)):
+        if verbose:
+            print("Computing web ", i)
+        web, phi = webs[i]
+        llWll = evaluate(top, bottom, web)
+        ys.append(phi * llWll)
+
+        if verbose:
+            print("web: ", i)
+            print(ys[-1])
+
+    #---
+    # Summate over y(s)s
+    llDll = 0
+    for y in ys:
+        llDll += simplify(y)
+
+    if verbose:
+        print("")
+        print("--- Evaluation ---")
+        print(f"llDll = {llDll}")
+        print("")
+    
+    return llDll
+
+#===
 # Main Method
 def main(braid, showinput = False):
 
@@ -556,12 +677,13 @@ def main(braid, showinput = False):
         seebraid(braid)
 
     print("\nEvaluated ouput:")
-    evaluation = evaluate(top, bottom, web)
-    evaluation = simplify(evaluation,)
+    evaluation = webSum(braid)
+    #evaluation = simplify(evaluation)
+
     display(evaluation)
 
     return evaluation
 
 if __name__ == '__main__':
     #main(Braid.braid02, True)
-    main(compose(Braid.b5, Braid.b5))
+    main(Braid.garside, True)
