@@ -4,7 +4,7 @@
 #===
 # Imports
 import sympy as sm
-from webs import Braid, compose, build
+from webs import Braid, compose, build, power
 from printing import basis, display, seebraid
 
 #===
@@ -322,44 +322,6 @@ def resolveStacks(web, qweb):
 
     return newweb, qweb, altered
 
-
-#---
-# Resolve a square case
-def resolveSquares(top, bottom, web, qweb):
-    
-    newweb = web.copy()
-
-    for item in newweb:
-
-        if len(item) == 4:
-            a, b, c, d = item
-            newweb.remove(item)
-            add = True
-            
-            for next in newweb:
-
-                if len(next) == 4:
-                    w, x, y, z = next
-                    
-                    #---
-                    # Resolve a square "above" a web
-                    if ((a == x) and (b == w)):
-                        newweb.remove(next)
-                        return [], qweb * (evaluate(top, bottom, newweb.copy() + [[d, c], [y, z]])
-                                              + evaluate(top, bottom, newweb.copy() + [[c, z], [d, y]]))
-                    
-                    #---
-                    # Resolve a square "beneath" a web
-                    elif ((d == y) and (c == z)):
-                        newweb.remove(next)
-                        return [], qweb * (evaluate(newweb.copy() + [[a, b], [w, x]])
-                                              + evaluate(newweb.copy() + [[b, w], [a, x]]))
-                    
-            if add:
-                newweb.insert(0, item)
-
-    return newweb, qweb
-
 #---
 # Resolve a square with three components
 #~~~
@@ -478,10 +440,7 @@ def evaluate(top, bottom, web, verbose = False):
             print("web ", web)
 
         #~~~
-        # b0 could have up to three components, but none are larger than length 2
-
-        #~~~
-        # Other cases have 1 or two components
+        # Cases have 1 or two components
         if len(web) <= 2:
             heldwebs = []
 
@@ -499,12 +458,13 @@ def evaluate(top, bottom, web, verbose = False):
                     web = []
                     qweb = qweb * b1
 
+                    return qweb
+
                 elif (o == y) and (l == z):
                     web = []
                     qweb = qweb * b2
 
-                
-                return qweb
+                    return qweb
         
             # Two webs form a basis
             elif len(heldwebs) == 2:
@@ -515,11 +475,13 @@ def evaluate(top, bottom, web, verbose = False):
                     web = []
                     qweb = qweb * b3
 
+                    return qweb
+
                 elif (q == n) or (l == s):
                     web = []
                     qweb = qweb * b4
 
-                return qweb
+                    return qweb
 
             #---
             # Remaining components must be 'pitchforks'
@@ -587,18 +549,7 @@ def evaluate(top, bottom, web, verbose = False):
 
         #---
         # Resolve squares of three components   
-        if squares and (len(web) >= 2):
-            
-            if verbose:
-                print("before resolve squares of three")
-                print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}")
-
-            web, qweb = resolveSquares(top, bottom, web, qweb)
-
-            if verbose:
-                print("after resolve squares of three")
-                print(f"    qweb: {qweb} --- web: {web}, top: {top}, bottom: {bottom}\n")
-
+        if squares and (len(web) >= 3):
 
             if verbose:
                 print("before resolve squares of three")
@@ -616,9 +567,7 @@ def evaluate(top, bottom, web, verbose = False):
 
         if web == []:
             reduce = False
-            #qweb = qweb * b0
-
-        if not reduce:
+    
             if top == bottom:
                 qweb = qweb * b0
 
@@ -656,7 +605,11 @@ def webSum(braid, verbose = False):
     #---
     # Summate over y(s)s
     llDll = 0
+    counter = 0
     for y in ys:
+        if verbose:
+            print("web", counter, ":", y)
+        counter += 1
         llDll += simplify(y)
 
     if verbose:
@@ -675,15 +628,22 @@ def main(braid, showinput = False):
     if showinput:
         print("\nInput Braid:")
         seebraid(braid)
-
-    print("\nEvaluated ouput:")
+        print("\nEvaluated ouput:")
+        
     evaluation = webSum(braid)
-    #evaluation = simplify(evaluation)
 
     display(evaluation)
 
     return evaluation
 
+def evaluateone(braid, state):
+
+    top, bottom, web = braid
+    web, phi = findwebs(web)[state]
+    evaluation = evaluate(top, bottom, web)
+    return evaluation
+
 if __name__ == '__main__':
     #main(Braid.braid02, True)
-    main(Braid.garside, True)
+    print(main(power(Braid.garside, 2), True))
+    #print(evaluateone(power(Braid.garside, 2), 45))
