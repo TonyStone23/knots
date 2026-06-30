@@ -14,6 +14,14 @@
 #===
 # Braid class to serve as pointers to pre-defined braids 
 class Braid:
+
+    """
+    **Basis elements**: .b0, .b1, .b2, .b3, .b4, .b5
+
+    **Hard Coded Braids**: .braid01, .braid02
+
+    **Garside element**: .garside
+    """
     #---
     # Basis Element Definition
     b0 = ([1, 2, 3],
@@ -59,12 +67,11 @@ class Braid:
 
     # Needs improvement, composition with components of 3 needs attention.
 def compose(w2, w1, verbose = False):
-    """
-    **Input**: The tuple representing a braid: (top, bottom, web)
-    
-    **Output**: The composisiton of braids. 
 
-    *Please note that the input order matters*         
+    """
+    Composition of two braids.
+
+    - w2, w1: The two three-tuples representing a braid: (top, bottom, web). Please note that the input order matters.       
     """
 
     top1, bottom1, web1 = w2
@@ -145,6 +152,14 @@ def compose(w2, w1, verbose = False):
 
 def power(braid, n):
 
+    """
+    Computes the power of a braid
+    
+    -  **braid**: The three-tuple representation of a braid: (top, bottom, web).
+
+    - ***n***: The exponent
+    """
+
     result = Braid.b0
     for i in range(0, n):
         result = compose(braid, result)
@@ -152,6 +167,12 @@ def power(braid, n):
     return result
 
 def build(elements):
+
+    """
+    builds a braid from a list of elements.
+    
+    - **elements**: a list of braid (or basis) three tuples: [braid, braid, ...].
+    """
 
     braid = Braid.b0
     for element in elements:

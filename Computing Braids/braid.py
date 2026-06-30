@@ -621,10 +621,20 @@ def webSum(braid, verbose = False):
     return llDll
 
 #===
-# Main Method
-def main(braid, showinput = False):
+# Compute the sl3 of an open web
+def sl3(braid, pretty = True, showinput = False):
+    """
+    computes the sl3 of a braid
+
+    - **braid**: The (top, bottom, web) three-tuple representing an open braid.
+
+    - **pretty**: If true, outputs the equation with pictures, otherwise the sympy expression is returned.
+
+    - **showinput**: If true, prints the input braid.
+    """
 
     top, bottom, web = braid
+
     if showinput:
         print("\nInput Braid:")
         seebraid(braid)
@@ -632,8 +642,12 @@ def main(braid, showinput = False):
         
     evaluation = webSum(braid)
 
-    display(evaluation)
+    if pretty:
+        display(evaluation)
 
+    else:
+        print(evaluation)
+    
     return evaluation
 
 def evaluateone(braid, state):
@@ -641,9 +655,11 @@ def evaluateone(braid, state):
     top, bottom, web = braid
     web, phi = findwebs(web)[state]
     evaluation = evaluate(top, bottom, web)
+
     return evaluation
 
 if __name__ == '__main__':
     #main(Braid.braid02, True)
-    print(main(power(Braid.garside, 2), True))
+    #print(main(power(Braid.garside, 2), True))
     #print(evaluateone(power(Braid.garside, 2), 45))
+    pass

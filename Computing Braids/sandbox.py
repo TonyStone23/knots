@@ -1,10 +1,11 @@
-from braid import main
+from braid import sl3
 from webs import Braid, compose, power, build
 from printing import seebraid
 
 #===
 # Go crazy
 print("Garside^1:")
-main(power(Braid.garside, 1), False)
+sl3(power(Braid.garside, 1))
+
 print("Garside^2:")
-main(power(Braid.garside, 2), False)
+sl3(power(Braid.garside, 2))
