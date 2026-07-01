@@ -582,7 +582,7 @@ def simplify(expression):
 
 #===
 # Perform web Sum
-def webSum(braid, verbose = False):
+def webSum(braid, verbose = True):
     #---
     # Determine webs
     top, bottom, web = braid
@@ -660,6 +660,6 @@ def evaluateone(braid, state):
 
 if __name__ == '__main__':
     #main(Braid.braid02, True)
-    #print(main(power(Braid.garside, 2), True))
+    print(sl3(power(Braid.garside, 6), True))
     #print(evaluateone(power(Braid.garside, 2), 45))
     pass

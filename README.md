@@ -55,13 +55,13 @@ Computations relating to the sl3 invariant from the PD code representation of a 
 
     - This file contains the tools in order to display braids and basis elements.
 
-- **reference.py**
-
-    - This file serves as the shell for running a braid computation.
-
 - **sandbox.py**
 
     - This file serves as a sandbox for braid computation.
+
+- **data.py**
+
+    - This file is used to collect data for computation of Garside Powers.
 
 ## Development Timeline
 
