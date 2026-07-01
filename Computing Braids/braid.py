@@ -582,7 +582,7 @@ def simplify(expression):
 
 #===
 # Perform web Sum
-def webSum(braid, verbose = True):
+def webSum(braid, verbose = False, status = False):
     #---
     # Determine webs
     top, bottom, web = braid
@@ -592,6 +592,8 @@ def webSum(braid, verbose = True):
     # Compute y(s)
     ys = []
     for i in range(len(webs)):
+        if status:
+            print(f"{i/len(webs)*100:.3f}% completed")
         if verbose:
             print("Computing web ", i)
         web, phi = webs[i]
@@ -660,6 +662,6 @@ def evaluateone(braid, state):
 
 if __name__ == '__main__':
     #main(Braid.braid02, True)
-    print(sl3(power(Braid.garside, 6), True))
+    print(sl3(power(Braid.garside, 5)))
     #print(evaluateone(power(Braid.garside, 2), 45))
     pass
