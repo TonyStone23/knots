@@ -485,7 +485,7 @@ def evaluate(top, bottom, web, verbose = False):
 
             #---
             # Remaining components must be 'pitchforks'
-            if len(heldwebs) == 0:
+            elif len(heldwebs) == 0 and len(web) >= 1:
                 
                 qweb = qweb * b5
 
